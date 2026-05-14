@@ -85,8 +85,6 @@ export default function StatisticsPanel({ statistics, onViewAchievements }: Stat
           </Button>
         </div>
       )}
-      
-
     </div>
   );
 }

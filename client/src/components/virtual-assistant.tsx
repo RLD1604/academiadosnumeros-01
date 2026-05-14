@@ -318,5 +318,6 @@ export default function VirtualAssistant({ currentPage, onClose, isVisible = tru
         </div>
       </div>
     </div>
+
   );
 }

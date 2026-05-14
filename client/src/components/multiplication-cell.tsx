@@ -29,17 +29,16 @@ export default function MultiplicationCell({ row, col, cellData, onChange, onVal
   }, [row, col, onValidate]);
 
   const getClassName = () => {
-    const baseClasses = "w-full h-full text-center text-xs sm:text-sm lg:text-lg font-bold border-none outline-none transition-all duration-300 transform hover:scale-105 focus:scale-105 focus:z-10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-greek";
-
+    const _bc = "w-full h-full text-center text-xs sm:text-sm lg:text-lg font-bold border-none outline-none transition-all duration-300 transform hover:scale-105 focus:scale-105 focus:z-10 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-greek";
     switch (cellData.state) {
       case 'correct':
-        return `${baseClasses} bg-green-500 text-white shadow-lg`;
+        return `${_bc} bg-green-500 text-white shadow-lg`;
       case 'error':
-        return `${baseClasses} bg-red-500 text-white shadow-lg`;
+        return `${_bc} bg-red-500 text-white shadow-lg`;
       case 'corrected':
-        return `${baseClasses} bg-amber-500 text-white shadow-lg`;
+        return `${_bc} bg-amber-500 text-white shadow-lg`;
       default:
-        return `${baseClasses} bg-transparent text-primary hover:bg-background focus:bg-card focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground`;
+        return `${_bc} bg-transparent text-primary hover:bg-background focus:bg-card focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground`;
     }
   };
 

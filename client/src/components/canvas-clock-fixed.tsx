@@ -111,7 +111,6 @@ export default function CanvasClockFixed({ clock, size = 400, isDraggable = fals
     } else if (draggedHand === 'minute') {
       const oldMinute = clock.minute;
       newTime.minute = newValue;
-      
       // Detectar transição de 59->0 (próxima hora) ou 0->59 (hora anterior)
       if (oldMinute >= 58 && newValue <= 1) {
         // Transição para próxima hora
@@ -393,10 +392,6 @@ export default function CanvasClockFixed({ clock, size = 400, isDraggable = fals
         onMouseDown={handleCanvasMouseDown}
         onTouchStart={handleCanvasTouchStart}
       />
-      
-
-
-
     </div>
   );
 }

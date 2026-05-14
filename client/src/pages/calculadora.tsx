@@ -18,6 +18,53 @@ interface DivisionStep {
   highlight?: boolean;
 }
 
+interface LongDivisionSubStep {
+  partialDividend: string;
+  quotientDigit: string;
+  product: string;
+  remainder: string;
+  digitBroughtDown?: string;
+}
+
+function computeLongDivisionSubSteps(dividend: string, divisor: string): LongDivisionSubStep[] | null {
+  if (dividend.length <= 1) return null;
+  if (dividend.length > 15) return null;
+
+  const dvs = BigInt(divisor);
+  if (dvs === 0n) return null;
+
+  const steps: LongDivisionSubStep[] = [];
+  let current = 0n;
+  let i = 0;
+
+  while (i < dividend.length) {
+    current = current * 10n + BigInt(dividend[i]);
+    i++;
+    if (current >= dvs || i === dividend.length) break;
+  }
+
+  while (true) {
+    const qDigit = current / dvs;
+    const product = qDigit * dvs;
+    const rem = current - product;
+    const digitBroughtDown = i < dividend.length ? dividend[i] : undefined;
+
+    steps.push({
+      partialDividend: current.toString(),
+      quotientDigit: qDigit.toString(),
+      product: product.toString(),
+      remainder: rem.toString(),
+      digitBroughtDown,
+    });
+
+    if (i >= dividend.length) break;
+    current = rem * 10n + BigInt(dividend[i]);
+    i++;
+  }
+
+  return steps;
+}
+
 function computeDivisionSteps(dividend: string, divisor: string, quotient: string, remainder: string): DivisionStep[] {
   const v = BigInt(divisor);
   const q = BigInt(quotient);
@@ -354,7 +401,6 @@ export default function Calculadora() {
       setExplanationError(true);
     }
   };
-
   const hasRemainder = resultData?.remainder !== undefined && resultData.remainder !== '0';
   const isDivisionExact = lastCalc?.op.value === 'division' && resultData?.remainder === '0';
   const showResult = resultData !== null && lastCalc !== null;
@@ -605,32 +651,140 @@ export default function Calculadora() {
               </button>
 
               {showDivisionSteps && (() => {
-                const steps = computeDivisionSteps(
-                  lastCalc.numbers[0],
-                  lastCalc.numbers[1],
-                  resultData.result,
-                  resultData.remainder ?? '0',
-                );
+                const dividend = lastCalc.numbers[0];
+                const divisor = lastCalc.numbers[1];
+                const quotient = resultData.result;
+                const remainder = resultData.remainder ?? '0';
+                const longSteps = computeLongDivisionSubSteps(dividend, divisor);
+                const summarySteps = computeDivisionSteps(dividend, divisor, quotient, remainder);
+
                 return (
-                  <div className="bg-white px-5 py-4 space-y-3">
-                    {steps.map((step, i) => (
-                      <div
-                        key={i}
-                        className={`rounded-xl px-4 py-3 ${
-                          step.highlight
-                            ? 'bg-purple-100 border-2 border-purple-300'
-                            : 'bg-gray-50 border border-gray-200'
-                        }`}
-                      >
-                        <p className="text-xs font-bold text-gray-500 mb-1">{step.label}</p>
-                        <p className={`font-mono font-bold text-base ${step.highlight ? 'text-purple-800' : 'text-gray-800'}`}>
-                          {step.value}
+                  <div className="bg-white px-5 py-4 space-y-4">
+
+                    {/* ── Digit-by-digit long division (multi-digit dividends) ── */}
+                    {longSteps ? (
+                      <div className="space-y-2">
+
+                        {/* Brazilian "chapéu" notation */}
+                        <div className="flex justify-center pb-1">
+                          <div className="font-mono">
+                            <div className="flex items-stretch">
+                              <div className="border-b-2 border-r-2 border-gray-700 pr-4 pb-1 text-2xl font-black text-gray-800 tracking-widest">
+                                {dividend}
+                              </div>
+                              <div className="border-b-2 border-gray-700 pl-4 pb-1 text-2xl font-black text-purple-700">
+                                {divisor}
+                              </div>
+                            </div>
+                            <div className="text-right pr-0 pl-4 pt-1 text-xl font-black text-purple-800 tracking-widest">
+                              {quotient}
+                              {remainder !== '0' && (
+                                <span className="text-sm font-bold text-purple-400 ml-1">(r. {remainder})</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className="text-xs font-bold text-purple-600 uppercase tracking-widest text-center">
+                          Divisão dígito por dígito
                         </p>
-                        {step.detail && (
-                          <p className="text-xs text-gray-500 mt-1 leading-relaxed">{step.detail}</p>
-                        )}
+                        {longSteps.map((step, i) => (
+                          <div key={i} className="rounded-xl border border-purple-100 bg-purple-50 overflow-hidden">
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-100 border-b border-purple-200">
+                              <span className="text-xs font-black text-purple-700 bg-purple-200 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">
+                                {i + 1}
+                              </span>
+                              <span className="text-xs font-bold text-purple-700">
+                                Quantas vezes {divisor} cabe em{' '}
+                                <span className="font-black">{step.partialDividend}</span>?
+                              </span>
+                            </div>
+                            <div className="px-3 py-2 font-mono text-sm space-y-0.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-purple-400 text-xs w-3">÷</span>
+                                <span className="text-gray-700">
+                                  {step.partialDividend} ÷ {divisor} ={' '}
+                                  <span className="font-black text-purple-800 text-base">{step.quotientDigit}</span>
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-purple-400 text-xs w-3">×</span>
+                                <span className="text-gray-600">
+                                  {step.quotientDigit} × {divisor} = {step.product}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 border-t border-purple-100 pt-0.5 mt-0.5">
+                                <span className="text-purple-400 text-xs w-3">−</span>
+                                <span className="text-gray-600">
+                                  {step.partialDividend} − {step.product} ={' '}
+                                  <span className="font-bold text-gray-800">{step.remainder}</span>
+                                </span>
+                              </div>
+                            </div>
+                            {step.digitBroughtDown !== undefined && (
+                              <div className="px-3 py-1.5 bg-amber-50 border-t border-amber-100 text-xs text-amber-700 font-medium flex items-center gap-1.5">
+                                <span>↓</span>
+                                <span>
+                                  Desce o dígito{' '}
+                                  <span className="font-black text-amber-800">'{step.digitBroughtDown}'</span>
+                                  {' '}→ novo parcial:{' '}
+                                  <span className="font-black text-amber-800">
+                                    {step.remainder}{step.digitBroughtDown}
+                                  </span>
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+
+                        {/* Final remainder note */}
+                        <div className={`rounded-xl px-4 py-2.5 text-center text-sm font-semibold ${
+                          remainder === '0'
+                            ? 'bg-green-50 border-2 border-green-300 text-green-700'
+                            : 'bg-purple-50 border-2 border-purple-300 text-purple-700'
+                        }`}>
+                          {remainder === '0'
+                            ? '🎉 Resto final = 0 — divisão exata!'
+                            : `Resto final = ${remainder} (menor que ${divisor}, paramos aqui!)`}
+                        </div>
                       </div>
-                    ))}
+                    ) : (
+                      /* Fallback summary for single-digit dividends */
+                      <div className="space-y-3">
+                        {summarySteps.map((step, i) => (
+                          <div
+                            key={i}
+                            className={`rounded-xl px-4 py-3 ${
+                              step.highlight
+                                ? 'bg-purple-100 border-2 border-purple-300'
+                                : 'bg-gray-50 border border-gray-200'
+                            }`}
+                          >
+                            <p className="text-xs font-bold text-gray-500 mb-1">{step.label}</p>
+                            <p className={`font-mono font-bold text-base ${step.highlight ? 'text-purple-800' : 'text-gray-800'}`}>
+                              {step.value}
+                            </p>
+                            {step.detail && (
+                              <p className="text-xs text-gray-500 mt-1 leading-relaxed">{step.detail}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Verification (always shown) */}
+                    {longSteps && (
+                      <div className="rounded-xl px-4 py-3 bg-purple-100 border-2 border-purple-300">
+                        <p className="text-xs font-bold text-gray-500 mb-1">✅ Verificação</p>
+                        <p className="font-mono font-bold text-base text-purple-800">
+                          {remainder === '0'
+                            ? `${quotient} × ${divisor} = ${dividend} ✓`
+                            : `${quotient} × ${divisor} + ${remainder} = ${dividend} ✓`}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">A conta fecha! Resultado correto.</p>
+                      </div>
+                    )}
+
                     <p className="text-center text-xs text-purple-400 pt-1 italic">
                       Arquimedes te mostrou como a divisão funciona por dentro! 🏛️
                     </p>
@@ -639,7 +793,6 @@ export default function Calculadora() {
               })()}
             </div>
           )}
-
           {/* Arquimedes loading */}
           {showResult && explanationMutation.isPending && (
             <div className="bg-amber-50 rounded-2xl border-2 border-amber-200 shadow-md p-5">

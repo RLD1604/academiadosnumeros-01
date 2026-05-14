@@ -529,7 +529,7 @@ export default function Assessment() {
         correctAnswer: '5',
         userAnswer: '',
         explanation: 'Se 45 ÷ 5 = 9, então 45 ÷ 9 = 5',
-        example: 'Digite apenas o resultado da divisão. Exemplo: 20 ÷ 4 = 5'
+        example: 'Digite apenas o resultado da division. Exemplo: 20 ÷ 4 = 5'
       },
       {
         id: questionId++,
@@ -962,7 +962,6 @@ export default function Assessment() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

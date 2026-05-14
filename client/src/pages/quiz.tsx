@@ -8,6 +8,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useArquimedesEvents } from '@/lib/arquimedes-events';
 
 type QuizType = 'multiplication' | 'division' | 'addition' | 'subtraction' | 'mixed' | 'squares' | 'cubes';
@@ -205,7 +206,6 @@ export default function Quiz() {
     } while (usedExpressions.has(expression));
 
     usedExpressions.add(expression);
-
     return {
       id,
       operation: 'multiplication',
@@ -368,6 +368,7 @@ export default function Quiz() {
         // mixed com distribuição igual — tratado fora do loop
         question = generateAdditionQuestion(i + 1, usedExpressions); // placeholder, substituído abaixo
       }
+
 
       questions.push(question);
     }
@@ -540,6 +541,7 @@ export default function Quiz() {
     if (newType === 'squares' || newType === 'cubes') {
       setSettings(prev => ({ ...prev, quizType: newType, questionCount: 10 }));
       const questions = generateAllQuestions(10, newType);
+
       setQuizState({
         questions,
         isCompleted: false,
@@ -1018,7 +1020,6 @@ export default function Quiz() {
             </div>
           )}
         </aside>
-
       </div>
 
       {/* Hidden exponent editor dialog */}
@@ -1138,6 +1139,407 @@ export default function Quiz() {
               </div>
             </DialogContent>
       </Dialog>
+
+        {/* Tabs for Quiz Types */}
+        <Tabs value={settings.quizType} onValueChange={handleTabChange} className="mb-8">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 max-w-5xl mx-auto bg-muted p-1 rounded-xl gap-1">
+            <TabsTrigger 
+              value="multiplication" 
+              className="font-greek font-semibold text-xs sm:text-sm lg:text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-lg"
+              data-testid="tab-multiplication"
+            >
+              ✖️ Multiplicação
+            </TabsTrigger>
+            <TabsTrigger 
+              value="division" 
+              className="font-greek font-semibold text-xs sm:text-sm lg:text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-lg"
+              data-testid="tab-division"
+            >
+              ➗ Divisão
+            </TabsTrigger>
+            <TabsTrigger 
+              value="addition" 
+              className="font-greek font-semibold text-xs sm:text-sm lg:text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-lg"
+              data-testid="tab-addition"
+            >
+              ➕ Adição
+            </TabsTrigger>
+            <TabsTrigger 
+              value="subtraction" 
+              className="font-greek font-semibold text-xs sm:text-sm lg:text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-lg"
+              data-testid="tab-subtraction"
+            >
+              ➖ Subtração
+            </TabsTrigger>
+            <TabsTrigger 
+              value="squares" 
+              className="font-greek font-semibold text-xs sm:text-sm lg:text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-lg"
+              data-testid="tab-squares"
+            >
+              🔲 Quadrados
+            </TabsTrigger>
+            <TabsTrigger 
+              value="cubes" 
+              className="font-greek font-semibold text-xs sm:text-sm lg:text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-lg"
+              data-testid="tab-cubes"
+            >
+              🧊 Cubos
+            </TabsTrigger>
+            <TabsTrigger 
+              value="mixed" 
+              className="font-greek font-semibold text-xs sm:text-sm lg:text-base data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-lg"
+              data-testid="tab-mixed"
+            >
+              🔀 Misto
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="multiplication" className="mt-0">
+            <div className="text-center py-4">
+              <p className="text-muted-foreground font-greek">Desafio de multiplicação configurável</p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="division" className="mt-0">
+            <div className="text-center py-4">
+              <p className="text-muted-foreground font-greek">Desafio de divisão configurável</p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="addition" className="mt-0">
+            <div className="text-center py-4">
+              <p className="text-muted-foreground font-greek">Desafio de adição configurável</p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="subtraction" className="mt-0">
+            <div className="text-center py-4">
+              <p className="text-muted-foreground font-greek">Desafio de subtração configurável</p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="squares" className="mt-0">
+            <div className="text-center py-4">
+              <p className="text-muted-foreground font-greek">
+                Desafio de potenciação ao quadrado: {renderExponent('2² = 2 × 2 = ?')}
+              </p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="cubes" className="mt-0">
+            <div className="text-center py-4">
+              <p className="text-muted-foreground font-greek">
+                Desafio de potenciação ao cubo: {renderExponent('2³ = 2 × 2 × 2 = ?')}
+              </p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="mixed" className="mt-0">
+            <div className="text-center py-4 space-y-4">
+              <p className="text-muted-foreground font-greek">Desafio misto: adição, subtração, multiplicação e divisão combinadas</p>
+              <div className="bg-white border border-border rounded-xl p-4 max-w-2xl mx-auto text-left">
+                <p className="font-greek font-semibold text-center mb-3">Escolha quais operações entrarão no misto:</p>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.mixedOperations.addition}
+                      onChange={() => handleMixedOperationChange('addition')}
+                    />
+                    <span>Adição</span>
+                  </label>
+                  <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.mixedOperations.subtraction}
+                      onChange={() => handleMixedOperationChange('subtraction')}
+                    />
+                    <span>Subtração</span>
+                  </label>
+                  <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.mixedOperations.multiplication}
+                      onChange={() => handleMixedOperationChange('multiplication')}
+                    />
+                    <span>Multiplicação</span>
+                  </label>
+                  <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.mixedOperations.division}
+                      onChange={() => handleMixedOperationChange('division')}
+                    />
+                    <span>Divisão</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        {/* Question Count Selection */}
+        <div className="academia-container mb-8">
+          <h3 className="academia-subtitle text-center mb-6">📊 Configuração do Desafio</h3>
+          
+          <div className="max-w-md mx-auto">
+            {settings.quizType === 'squares' || settings.quizType === 'cubes' ? (
+              <div className="text-center">
+                <div className="bg-blue-100 border-2 border-blue-300 rounded-xl p-6">
+                  <p className="text-lg font-bold text-blue-800 mb-2 font-greek">
+                    📌 Questões Fixas
+                  </p>
+                  <p className="text-blue-700 font-greek">
+                    Este desafio sempre apresenta <strong className="text-2xl">10 questões</strong> (todas as bases de 1 a 10)
+                  </p>
+                  <p className="text-sm text-blue-600 mt-3 font-greek">
+                    ✨ Sem repetições! Cada número aparece apenas uma vez.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <label className="block text-lg font-semibold text-card-foreground mb-4 text-center font-greek">
+                  Quantas questões você quer resolver?
+                </label>
+                <Select value={settings.questionCount.toString()} onValueChange={handleQuestionCountChange}>
+                  <SelectTrigger className="w-full text-lg py-4 px-6 border-border bg-background" data-testid="select-question-count">
+                    <SelectValue placeholder="Selecione a quantidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10 questões</SelectItem>
+                    <SelectItem value="20">20 questões</SelectItem>
+                    <SelectItem value="30">30 questões</SelectItem>
+                    <SelectItem value="40">40 questões</SelectItem>
+                    <SelectItem value="50">50 questões</SelectItem>
+                    <SelectItem value="60">60 questões</SelectItem>
+                    <SelectItem value="70">70 questões</SelectItem>
+                    <SelectItem value="80">80 questões</SelectItem>
+                    <SelectItem value="90">90 questões</SelectItem>
+                    <SelectItem value="100">100 questões</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-center text-muted-foreground mt-4">
+                  Atualmente configurado para <strong>{settings.questionCount} questões</strong>
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Timer Configuration */}
+        <div className="academia-container mb-8">
+          <h3 className="academia-subtitle text-center mb-6">⏱️ Cronômetro do Desafio</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            {/* Time Selection */}
+            <div className="text-center">
+              <label className="block text-sm font-semibold text-card-foreground mb-2 font-greek">
+                Tempo para completar:
+              </label>
+              <Select value={timer.selectedTime.toString()} onValueChange={handleTimeSelect}>
+                <SelectTrigger className="w-full border-border bg-background" data-testid="select-timer">
+                  <SelectValue placeholder="Selecione o tempo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 minuto</SelectItem>
+                  <SelectItem value="2">2 minutos</SelectItem>
+                  <SelectItem value="3">3 minutos</SelectItem>
+                  <SelectItem value="5">5 minutos</SelectItem>
+                  <SelectItem value="7">7 minutos</SelectItem>
+                  <SelectItem value="10">10 minutos</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-2">
+                Tempo sugerido automaticamente. Você pode alterar se desejar.
+              </p>
+            </div>
+
+            {/* Timer Display */}
+            <div className="text-center">
+              <div className={`text-6xl font-bold mb-4 font-greek ${
+                timer.remainingTime <= 60 && timer.remainingTime > 0 
+                  ? 'text-red-500 animate-pulse' 
+                  : timer.isActive 
+                    ? 'text-primary' 
+                    : 'text-muted-foreground'
+              }`} data-testid="timer-display">
+                {formatTime(timer.remainingTime)}
+              </div>
+              <div className="text-sm text-card-foreground">
+                {timer.remainingTime <= 60 && timer.remainingTime > 0 
+                  ? '⚠️ Último minuto!' 
+                  : timer.isActive 
+                    ? '🏃‍♂️ Tempo correndo...' 
+                    : timer.isConfigured
+                      ? '⏸️ Tempo pausado'
+                      : '⏰ Configure o tempo'}
+              </div>
+            </div>
+
+            {/* Timer Controls */}
+            <div className="text-center space-y-3">
+              {!timer.isActive ? (
+                <Button
+                  onClick={startTimer}
+                  className="w-full academia-button-primary py-3 px-6 rounded-xl"
+                  data-testid="button-start-timer"
+                >
+                  ▶️ {timer.isConfigured ? 'Continuar' : 'Iniciar'} Timer
+                </Button>
+              ) : (
+                <Button
+                  onClick={pauseTimer}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white font-greek font-semibold py-3 px-6 rounded-xl"
+                  data-testid="button-pause-timer"
+                >
+                  ⏸️ Pausar Timer
+                </Button>
+              )}
+              <Button
+                onClick={resetTimer}
+                className="w-full bg-muted hover:bg-muted/80 text-muted-foreground font-greek font-semibold py-2 px-6 rounded-xl"
+                data-testid="button-reset-timer"
+              >
+                🔄 Resetar Timer
+              </Button>
+            </div>
+          </div>
+
+          {/* Timer Status Message */}
+          {timer.isConfigured && !timer.isActive && (
+            <div className="mt-6 p-4 bg-amber-100 border border-amber-300 rounded-lg text-center">
+              <p className="text-amber-800 font-semibold font-greek">
+                ⏸️ Timer pausado - As respostas estão bloqueadas. Inicie o timer para continuar!
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Quiz Questions Grid */}
+        <div className="academia-container mb-8">
+          <h3 className="academia-subtitle text-center mb-6">
+            📝 {quizState.questions.length} Questões de {getQuizTitle()}
+          </h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {quizState.questions.map((question, index) => (
+              <div key={question.id} className="bg-background rounded-xl p-4 border-2 border-border">
+                <div className="text-center mb-3">
+                  <span className="text-xs text-red-600 font-medium">{index + 1}</span>
+                  <div className="text-2xl font-bold text-card-foreground font-math">
+                    {getQuestionDisplay(question)}
+                  </div>
+                </div>
+                <input
+                  type="number"
+                  value={question.userAnswer}
+                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                  disabled={(timer.isConfigured && !timer.isActive) || quizState.isCompleted}
+                  className={`w-full text-center text-xl font-semibold border-2 rounded-lg p-2 transition-colors duration-300 font-math ${
+                    quizState.isCompleted
+                      ? question.isCorrect 
+                        ? 'bg-green-100 border-green-300 text-green-800'
+                        : question.isCorrect === false
+                          ? 'bg-red-100 border-red-300 text-red-800'
+                          : 'bg-background border-border text-card-foreground'
+                      : timer.isConfigured && !timer.isActive
+                        ? 'bg-muted border-border cursor-not-allowed text-muted-foreground'
+                        : 'border-border bg-background text-card-foreground focus:border-primary focus:ring-2 focus:ring-primary/20'
+                  } [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                  placeholder="?"
+                  data-testid={`input-answer-${question.id}`}
+                />
+                {quizState.isCompleted && question.isCorrect === false && (
+                  <div className="text-red-600 font-semibold mt-1 text-xs text-center font-greek">
+                    Correto: {question.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Results and Statistics */}
+        {quizState.isCompleted && (
+          <div className="academia-container mb-8">
+            <h3 className="academia-subtitle text-center mb-6">
+              📊 Resultado Final
+            </h3>
+            
+            {/* Overall Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="text-center p-6 bg-green-100 rounded-xl border border-green-200">
+                <div className="text-4xl font-bold text-green-600 mb-2 font-greek" data-testid="stats-correct">
+                  {quizState.stats.correct}
+                </div>
+                <div className="text-green-800 font-semibold">Acertos</div>
+              </div>
+              <div className="text-center p-6 bg-red-100 rounded-xl border border-red-200">
+                <div className="text-4xl font-bold text-red-600 mb-2 font-greek" data-testid="stats-errors">
+                  {quizState.stats.wrongAnswers.length}
+                </div>
+                <div className="text-red-800 font-semibold">Erros</div>
+              </div>
+              <div className="text-center p-6 bg-blue-100 rounded-xl border border-blue-200">
+                <div className="text-4xl font-bold text-primary mb-2 font-greek" data-testid="stats-accuracy">
+                  {accuracyPercentage}%
+                </div>
+                <div className="text-primary font-semibold">Precisão</div>
+              </div>
+            </div>
+
+            {/* Wrong Answers Detail */}
+            {quizState.stats.wrongAnswers.length > 0 && (
+              <div className="bg-red-50 rounded-xl p-6 border-2 border-red-200">
+                <h4 className="text-lg font-bold text-red-800 mb-4 text-center font-greek">
+                  🎯 Questões para revisar ({quizState.stats.wrongAnswers.length} erros)
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto">
+                  {quizState.stats.wrongAnswers.map((wrong, index) => (
+                    <div key={index} className="bg-card rounded-lg p-3 border border-red-300">
+                      <div className="text-center">
+                        <div className="font-bold text-red-800 font-greek">
+                          {wrong.operation === 'power' ? renderExponent(wrong.prompt) : wrong.prompt}
+                        </div>
+                        <div className="text-sm text-red-600">
+                          Sua resposta: {wrong.userAnswer}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 p-3 bg-amber-100 border border-amber-300 rounded-lg">
+                  <p className="text-amber-800 text-sm text-center font-medium font-greek">
+                    💡 Dica para pais: Pratique essas questões específicas para melhorar!
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {!quizState.isCompleted ? (
+            <Button
+              onClick={submitAnswers}
+              className="academia-button-primary py-3 px-8 rounded-xl shadow-lg hover:shadow-xl"
+              data-testid="button-submit-quiz"
+            >
+              ✅ Finalizar Desafio
+            </Button>
+          ) : (
+            <Button
+              onClick={resetQuiz}
+              className="academia-button-secondary py-3 px-8 rounded-xl shadow-lg hover:shadow-xl"
+              data-testid="button-new-quiz"
+            >
+              🔄 Novo Desafio
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

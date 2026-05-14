@@ -18,11 +18,6 @@ interface ConfettiPiece {
 
 const CONFETTI_COLORS = ['#D4AF37', '#1976D2', '#42D392', '#FF7EB3', '#FF6B6B'];
 
-/* ── MÃOZINHA SVG — desenhada 100% em SVG, sem imagem externa ───
-   Cada dedo É o elemento clicável — alinhamento perfeito, sempre.
-   fingers[0]=polegar [1]=indicador [2]=médio [3]=anelar [4]=mínimo
-   mirror=true espelha a mão para o lado esquerdo.
-─────────────────────────────────────────────────────────────────── */
 function HandSVG({ fingers, onToggle, mirror }: {
   fingers: boolean[];
   onToggle: (i: number) => void;
@@ -294,7 +289,6 @@ export default function Contagem() {
     el.addEventListener('mousemove', onMove);
     return () => { el.removeEventListener('mousedown', onDown); el.removeEventListener('mouseleave', onUp); el.removeEventListener('mouseup', onUp); el.removeEventListener('mousemove', onMove); };
   }, []);
-
 
   /* ── HELPERS DE RENDER ────────────────────────────────────────── */
   const renderDots = (count: number) => (

@@ -195,7 +195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (err instanceof Error && err.message === "DIVISION_BY_ZERO") {
         return res.status(400).json({ message: "DIVISION_BY_ZERO" });
       }
-      return res.status(400).json({ message: "Números inválidos para cálculo" });
+      return res.status(400).json({ message: "Erro ao realizar cálculo" });
     }
 
     const groqKey = process.env.GROQ_API_KEY;
@@ -221,16 +221,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ? ` São ${numbers.length} números sendo ${computed.operationName === "adição" ? "somados" : "subtraídos"} em sequência.`
         : "";
 
-      const prompt = `Você é Arquimedes, um sábio matemático grego que explica matemática para crianças de forma simples, clara e encorajadora.
-Explique em português brasileiro, de forma bem didática e animada, como chegamos ao resultado desta conta:
-${computed.fullExpression}${remainderNote}${multiNote}
+      const prompt = `Você é Arquimedes, um sábio matemático grego que ensina crianças de forma simples, clara e encorajadora.
+Como Arquimedes, explique como chegar ao resultado de ${computed.fullExpression}.
+${multiNote}${remainderNote}
 
 Regras:
+- Responda em português brasileiro, de forma bem didática e simpática
 - Use linguagem simples, adequada para crianças de 6 a 12 anos
-- Explique o passo a passo da operação de ${computed.operationName}
-- Se forem mais de 2 números, explique que se faz passo a passo da esquerda para a direita
-- Se for divisão com resto, explique o conceito de resto de forma lúdica
-- Se os números forem grandes, explique a lógica sem fazer contas manuais longas
 - Seja breve: no máximo 4 parágrafos curtos
 - Use emojis com moderação para deixar divertido
 - Termine com uma frase de incentivo`;
@@ -283,8 +280,10 @@ Regras:
       "/calculadora": "o aluno está na página da calculadora educativa com IA",
       "/contagem": "o aluno está na página de prática de contagem e números",
     };
+
+
     const pageContext = page && pageContextMap[page]
-      ? `Contexto: ${pageContextMap[page]}.`
+      ? `Considere o contexto: ${pageContextMap[page]}.`
       : "";
 
     try {
@@ -410,6 +409,140 @@ Regras:
         console.error("Groq API error (arquimedes evento):", err instanceof Error ? err.message : err);
       }
       return res.status(503).json({ message: "" });
+    }
+  });
+
+  // Arquimedes AI: free question on any page
+  app.post("/api/arquimedes/perguntar", async (req, res) => {
+    const schema = z.object({
+      question: z.string().min(1).max(500),
+      page: z.string().optional(),
+    });
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Pergunta inválida." });
+    }
+    const { question, page } = parsed.data;
+
+    const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) return res.json({ answer: "" });
+
+    const pageContextMap: Record<string, string> = {
+      "/": "o aluno está na página da tabela de multiplicação (tabuada pitagórica 10x10)",
+      "/adicao": "o aluno está na página de tabuadas de adição (soma de números)",
+      "/subtracao": "o aluno está na página de tabuadas de subtração",
+      "/tabuadas": "o aluno está na página de tabuadas individuais de multiplicação (de 1 a 10)",
+      "/divisao": "o aluno está na página de tabuadas de divisão",
+      "/simulado": "o aluno está na página de simulado/desafio cronometrado de multiplicação, divisão, quadrados e cubos",
+      "/relogio": "o aluno está na página do relógio educativo, aprendendo a ler horas",
+      "/calculadora": "o aluno está na página da calculadora educativa com IA",
+      "/contagem": "o aluno está na página de prática de contagem e números",
+    };
+    const pageContext = page && pageContextMap[page]
+      ? `Contexto: ${pageContextMap[page]}.`
+      : "";
+
+    try {
+      const groq = new OpenAI({
+        apiKey: groqKey,
+        baseURL: "https://api.groq.com/openai/v1",
+      });
+
+      const prompt = `Você é Arquimedes, um sábio matemático grego que ensina crianças de forma simples, clara e encorajadora.
+${pageContext}
+Uma criança te fez a seguinte pergunta: "${question}"
+
+Regras:
+- Responda em português brasileiro, de forma bem didática e simpática
+- Use linguagem simples, adequada para crianças de 6 a 12 anos
+- Seja breve: no máximo 3 parágrafos curtos
+- Use emojis com moderação para deixar divertido
+- Se a pergunta for fora do tema educativo, redirecione gentilmente para matemática
+- Termine com uma frase de incentivo`;
+
+      const completion = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 384,
+        temperature: 0.7,
+      });
+
+      const answer = completion.choices[0]?.message?.content || "";
+      return res.json({ answer });
+    } catch (err) {
+      console.error("Groq API error (arquimedes):", err);
+      return res.json({ answer: "" });
+    }
+  });
+
+  // Arquimedes AI: proactive reaction to student events
+  app.post("/api/arquimedes/evento", async (req, res) => {
+    const schema = z.object({
+      event: z.string().min(1).max(100),
+      context: z.record(z.string(), z.unknown()).optional(),
+      page: z.string().optional(),
+    });
+    const parsed = schema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Evento inválido." });
+    }
+    const { event, context = {}, page } = parsed.data;
+
+    const groqKey = process.env.GROQ_API_KEY;
+    if (!groqKey) return res.json({ message: "" });
+
+    const pageContextMap: Record<string, string> = {
+      "/": "tabela de multiplicação completa (pitagórica 10x10)",
+      "/adicao": "tabuadas de adição",
+      "/subtracao": "tabuadas de subtração",
+      "/tabuadas": "tabuadas individuais de multiplicação",
+      "/divisao": "tabuadas de divisão",
+      "/simulado": "desafio cronometrado de matemática",
+      "/relogio": "relógio educativo",
+      "/calculadora": "calculadora educativa",
+      "/contagem": "prática de contagem",
+    };
+    const pageLabel = page && pageContextMap[page] ? pageContextMap[page] : "plataforma educativa";
+
+    const eventPromptMap: Record<string, string> = {
+      quiz_complete: `O aluno acabou de terminar um simulado de ${pageLabel}. Resultado: ${context.correct} acertos de ${context.total} questões (${context.accuracy}% de aproveitamento). Reaja de forma encorajadora, personalizada ao resultado — celebre se foi bom, encoraje se foi abaixo do esperado.`,
+      perfect_score: `O aluno acabou de obter PONTUAÇÃO PERFEITA em um simulado de ${pageLabel}: ${context.correct} de ${context.total} questões corretas! Celebre com muito entusiasmo e mostre admiração genuína pelo feito!`,
+      table_complete: `O aluno acabou de verificar suas respostas na tabuada do ${context.tableNumber} em ${pageLabel}. Acertou ${context.correct} de 10 questões em ${context.time}. Dê um feedback motivador e contextualizado ao resultado.`,
+      wrong_streak: `O aluno errou ${context.streak} questões seguidas no simulado de ${pageLabel}. Encoraje-o gentilmente, sem pressão, e ofereça uma dica rápida de como melhorar.`,
+    };
+
+    const eventPrompt = eventPromptMap[event]
+      ?? `O aluno realizou uma ação na seção de ${pageLabel}. Reaja de forma encorajadora e breve.`;
+
+    try {
+      const groq = new OpenAI({
+        apiKey: groqKey,
+        baseURL: "https://api.groq.com/openai/v1",
+      });
+
+      const prompt = `Você é Arquimedes, um sábio matemático grego que ensina crianças de forma simples, clara e encorajadora.
+${eventPrompt}
+
+Regras:
+- Responda em português brasileiro, de forma didática e calorosa
+- Use linguagem simples, adequada para crianças de 6 a 12 anos
+- Seja breve: no máximo 2 parágrafos curtos
+- Use emojis com moderação para deixar divertido
+- Fale na primeira pessoa como Arquimedes
+- Termine com uma frase de incentivo`;
+
+      const completion = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 256,
+        temperature: 0.8,
+      });
+
+      const message = completion.choices[0]?.message?.content || "";
+      return res.json({ message });
+    } catch (err) {
+      console.error("Groq API error (arquimedes evento):", err);
+      return res.json({ message: "" });
     }
   });
 

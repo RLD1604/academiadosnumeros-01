@@ -3,7 +3,6 @@
  * Desenvolvido por: Rodrigo Linhares Drummond
  * © 2025 Academia dos Números
  */
-
 import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -136,7 +135,7 @@ export default function IndividualTables() {
       wrong: wrongCount,
       time: formatTime(timer.elapsedTime)
     });
-    
+
     setIsVerified(true);
     setShowResults(true);
 
@@ -159,11 +158,6 @@ export default function IndividualTables() {
       elapsedTime: 0
     });
   }, []);
-
-  const handleTableChange = (tableNumber: number) => {
-    setSelectedTable(tableNumber);
-    resetTable();
-  };
 
   const getAnswer = (multiplier: number): Answer => {
     return answers.get(multiplier) || {
@@ -193,6 +187,11 @@ export default function IndividualTables() {
     return true;
   };
 
+  const handleTableChange = (tableNumber: number) => {
+    setSelectedTable(tableNumber);
+    resetTable();
+  };
+
   return (
     <div className="min-h-screen relative">
       <div className="absolute inset-0 greek-pattern opacity-5"></div>
@@ -211,14 +210,15 @@ export default function IndividualTables() {
         <div className="academia-container mb-8">
           <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-700 text-center mb-4 sm:mb-6">🎯 Escolha sua Tabuada</h3>
           <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-3 lg:gap-4 max-w-6xl mx-auto">
-            {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
+            {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
               <Button
                 key={num}
-                onClick={() => handleTableChange(num)}
-                className={`h-12 sm:h-14 lg:h-16 text-lg sm:text-xl lg:text-2xl font-bold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-md sm:shadow-lg font-greek aspect-square ${
-                  selectedTable === num 
-                    ? 'academia-button-primary' 
-                    : 'bg-white hover:bg-gray-50 text-blue-700 border-2 border-blue-200 hover:border-blue-400'
+                onClick={() => setSelectedTable(num)}
+                variant={selectedTable === num ? 'default' : 'outline'}
+                className={`h-12 sm:h-14 lg:h-16 text-lg sm:text-xl lg:text-2xl font-bold rounded-xl transition-all duration-300 transform hover:scale-105 ${
+                  selectedTable === num
+                    ? 'bg-blue-600 text-white shadow-blue-200 shadow-lg scale-110'
+                    : 'bg-white text-blue-700 border-2 border-blue-100 hover:border-blue-300 hover:bg-blue-50'
                 }`}
               >
                 {num}
@@ -226,7 +226,7 @@ export default function IndividualTables() {
             ))}
           </div>
         </div>
-        
+
         {/* Timer Display */}
         {gameStarted && (
           <div className="text-center mb-6">

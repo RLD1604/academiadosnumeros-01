@@ -26,8 +26,8 @@ import VirtualAssistant from "@/components/virtual-assistant";
 import { ArquimedesProvider, useArquimedesEvents } from "@/lib/arquimedes-events";
 
 import NotFound from "@/pages/not-found";
-
 import { useState, useEffect } from "react";
+import mathematicsBackground from '@assets/image_1749664770704.png';
 
 function Navigation() {
   const [location] = useLocation();
@@ -107,52 +107,11 @@ function Navigation() {
                 </div>
               </div>
             </Link>
-
-            <Link href="/adicao">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
-                location === "/adicao" 
-                  ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
-                  : 'bg-white text-gray-700 border-blue-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
-              }`}>
-                <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➕</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Adição</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Tabuadas de Soma</div>
-                </div>
-              </div>
-            </Link>
-
-            <Link href="/subtracao">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
-                location === "/subtracao" 
-                  ? 'bg-red-600 text-white border-red-700 shadow-red-200' 
-                  : 'bg-white text-gray-700 border-red-300 hover:bg-red-50 hover:border-red-400 hover:text-red-700'
-              }`}>
-                <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➖</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Subtração</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Tabuadas de Subtração</div>
-                </div>
-              </div>
-            </Link>
-
-            <Link href="/tabuadas">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
-                location === "/tabuadas" 
-                  ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
-                  : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
-              }`}>
-                <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>✕</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Tabuada</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Multiplicação</div>
-                </div>
-              </div>
-            </Link>
             
             <Link href="/divisao">
               <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/divisao" 
+
                   ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
@@ -163,7 +122,6 @@ function Navigation() {
                 </div>
               </div>
             </Link>
-            
             <Link href="/simulado">
               <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/simulado" 
@@ -177,7 +135,6 @@ function Navigation() {
                 </div>
               </div>
             </Link>
-
             <Link href="/relogio">
               <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/relogio" 
@@ -191,7 +148,6 @@ function Navigation() {
                 </div>
               </div>
             </Link>
-
             <Link href="/calculadora">
               <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/calculadora" 
@@ -205,7 +161,6 @@ function Navigation() {
                 </div>
               </div>
             </Link>
-
           </div>
         </div>
       </div>
@@ -251,6 +206,8 @@ function RouterInner() {
 }
 
 function Router() {
+  const [location] = useLocation();
+  
   return (
     <ArquimedesProvider>
       <RouterInner />

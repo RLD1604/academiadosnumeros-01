@@ -238,7 +238,6 @@ export default function MultiplicationTable() {
               onViewAchievements={() => setShowAchievements(true)}
             />
           </div>
-          
           {/* Multiplication Table - Right Side */}
           <div className="lg:flex-1">
             <div className="academia-container h-full">
