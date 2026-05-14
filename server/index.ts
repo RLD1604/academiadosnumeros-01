@@ -1,23 +1,42 @@
 import express, { type Request, Response, NextFunction } from "express";
 import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:5000", "http://127.0.0.1:5000"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}));
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "blob:"],
       connectSrc: ["'self'", "ws:", "wss:", "https:"],
     },
   },
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Muitas requisições deste IP, tente novamente mais tarde.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: false, limit: "1mb" }));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -70,15 +89,14 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
+  const port = parseInt(process.env.PORT || "5000", 10);
+  const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "127.0.0.1";
+
   server.listen({
     port,
-    host: "0.0.0.0",
+    host,
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`serving on http://${host}:${port}`);
   });
 })();

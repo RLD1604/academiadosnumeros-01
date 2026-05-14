@@ -3,9 +3,25 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import OpenAI from "openai";
 import { z } from "zod";
+import rateLimit from "express-rate-limit";
 
 const positiveInt = z.string().min(1).regex(/^\d+$/, "Apenas números inteiros positivos");
 const decimalOrInt = z.string().min(1).regex(/^\d+(\.\d+)?$/, "Número decimal inválido");
+
+function sanitizePromptInput(input: string): string {
+  return input
+    .replace(/`/g, "")
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .trim();
+}
+
+function validateGroqApiKey(key: string | undefined): string {
+  if (!key || !key.startsWith("gsk_")) {
+    throw new Error("Invalid Groq API key");
+  }
+  return key;
+}
 
 const calcularSchema = z.object({
   numbers: z.array(decimalOrInt).min(2, "Mínimo de 2 números"),
@@ -76,6 +92,26 @@ function computeResult(numbers: string[], operation: string): ComputeResult {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  const aiLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 10,
+    message: "Limite de requisições IA atingido. Tente novamente em 1 minuto.",
+    skip: (req) => {
+      const token = req.headers.authorization?.replace("Bearer ", "");
+      return token === process.env.AI_API_TOKEN;
+    },
+  });
+
+  const authMiddleware = (req: any, res: any, next: any) => {
+    const token = req.headers.authorization?.replace("Bearer ", "");
+    const apiToken = process.env.AI_API_TOKEN;
+
+    if (apiToken && token !== apiToken) {
+      return res.status(401).json({ message: "Não autorizado" });
+    }
+    next();
+  };
+
   function validateCalc(req: any, res: any): { numbers: string[]; operation: string } | null {
     const body = req.body;
     if (body && Array.isArray(body.numbers)) {
@@ -85,7 +121,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     const parsed = calcularSchema.safeParse(body);
     if (!parsed.success) {
-      const msgs = parsed.error.errors.map((e: any) => e.message);
+      const msgs = parsed.error.issues.map((e: any) => e.message || "Invalid input");
       const msg = msgs.find((m: string) => m !== "Invalid input") || msgs[0] || "Dados inválidos";
       res.status(400).json({ message: msg });
       return null;
@@ -122,7 +158,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Slow route: calls Groq to get the explanation
-  app.post("/api/calcular/explicacao", async (req, res) => {
+  app.post("/api/calcular/explicacao", aiLimiter, authMiddleware, async (req, res) => {
     const validated = validateCalc(req, res);
     if (!validated) return;
 
@@ -139,9 +175,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) return res.json({ explanation: "" });
+    if (!groqKey) {
+      return res.status(503).json({ message: "Serviço de IA não configurado" });
+    }
 
     try {
+      validateGroqApiKey(groqKey);
+
       const groq = new OpenAI({
         apiKey: groqKey,
         baseURL: "https://api.groq.com/openai/v1",
@@ -181,13 +221,17 @@ Regras:
       const explanation = completion.choices[0]?.message?.content || "";
       return res.json({ explanation });
     } catch (err) {
-      console.error("Groq API error:", err);
-      return res.json({ explanation: "" });
+      if (err instanceof Error && err.message.includes("Invalid Groq API key")) {
+        console.error("Groq API key validation error");
+      } else {
+        console.error("Groq API error:", err instanceof Error ? err.message : err);
+      }
+      return res.status(503).json({ message: "Erro ao processar explicação" });
     }
   });
 
   // Arquimedes AI: free question on any page
-  app.post("/api/arquimedes/perguntar", async (req, res) => {
+  app.post("/api/arquimedes/perguntar", aiLimiter, authMiddleware, async (req, res) => {
     const schema = z.object({
       question: z.string().min(1).max(500),
       page: z.string().optional(),
@@ -199,7 +243,9 @@ Regras:
     const { question, page } = parsed.data;
 
     const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) return res.json({ answer: "" });
+    if (!groqKey) {
+      return res.status(503).json({ message: "Serviço de IA não configurado" });
+    }
 
     const pageContextMap: Record<string, string> = {
       "/": "o aluno está na página da tabela de multiplicação (tabuada pitagórica 10x10)",
@@ -217,14 +263,17 @@ Regras:
       : "";
 
     try {
+      validateGroqApiKey(groqKey);
+
       const groq = new OpenAI({
         apiKey: groqKey,
         baseURL: "https://api.groq.com/openai/v1",
       });
 
+      const sanitizedQuestion = sanitizePromptInput(question);
       const prompt = `Você é Arquimedes, um sábio matemático grego que ensina crianças de forma simples, clara e encorajadora.
 ${pageContext}
-Uma criança te fez a seguinte pergunta: "${question}"
+Uma criança te fez a seguinte pergunta: "${sanitizedQuestion}"
 
 Regras:
 - Responda em português brasileiro, de forma bem didática e simpática
@@ -244,16 +293,27 @@ Regras:
       const answer = completion.choices[0]?.message?.content || "";
       return res.json({ answer });
     } catch (err) {
-      console.error("Groq API error (arquimedes):", err);
-      return res.json({ answer: "" });
+      if (err instanceof Error && err.message.includes("Invalid Groq API key")) {
+        console.error("Groq API key validation error");
+      } else {
+        console.error("Groq API error (arquimedes):", err instanceof Error ? err.message : err);
+      }
+      return res.status(503).json({ message: "Erro ao processar pergunta" });
     }
   });
 
   // Arquimedes AI: proactive reaction to student events
-  app.post("/api/arquimedes/evento", async (req, res) => {
+  app.post("/api/arquimedes/evento", aiLimiter, authMiddleware, async (req, res) => {
     const schema = z.object({
       event: z.string().min(1).max(100),
-      context: z.record(z.string(), z.unknown()).optional(),
+      context: z.object({
+        correct: z.number().optional(),
+        total: z.number().optional(),
+        accuracy: z.number().optional(),
+        streak: z.number().optional(),
+        tableNumber: z.number().optional(),
+        time: z.string().optional(),
+      }).optional(),
       page: z.string().optional(),
     });
     const parsed = schema.safeParse(req.body);
@@ -263,7 +323,9 @@ Regras:
     const { event, context = {}, page } = parsed.data;
 
     const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) return res.json({ message: "" });
+    if (!groqKey) {
+      return res.status(503).json({ message: "Serviço de IA não configurado" });
+    }
 
     const pageContextMap: Record<string, string> = {
       "/": "tabela de multiplicação completa (pitagórica 10x10)",
@@ -289,6 +351,8 @@ Regras:
       ?? `O aluno realizou uma ação na seção de ${pageLabel}. Reaja de forma encorajadora e breve.`;
 
     try {
+      validateGroqApiKey(groqKey);
+
       const groq = new OpenAI({
         apiKey: groqKey,
         baseURL: "https://api.groq.com/openai/v1",
@@ -315,8 +379,12 @@ Regras:
       const message = completion.choices[0]?.message?.content || "";
       return res.json({ message });
     } catch (err) {
-      console.error("Groq API error (arquimedes evento):", err);
-      return res.json({ message: "" });
+      if (err instanceof Error && err.message.includes("Invalid Groq API key")) {
+        console.error("Groq API key validation error");
+      } else {
+        console.error("Groq API error (arquimedes evento):", err instanceof Error ? err.message : err);
+      }
+      return res.status(503).json({ message: "" });
     }
   });
 
