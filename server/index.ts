@@ -7,6 +7,9 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
+// Trust Replit's reverse proxy so express-rate-limit can identify IPs correctly
+app.set("trust proxy", 1);
+
 app.use(cors({
   origin: process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:5000", "http://127.0.0.1:5000"],
   credentials: true,
