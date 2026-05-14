@@ -1,0 +1,380 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=Nunito:wght@900&display=swap');
+
+/**
+ * Academia dos Números - Estilos Globais
+ * Desenvolvido por: Rodrigo Linhares Drummond
+ * Empresa: Academia dos Números
+ * © 2025 Todos os direitos reservados
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Academia dos Números - Paleta Unificada Grega */
+  
+  /* Cores Primárias */
+  --aegean: 201 79% 46%; /* #1976D2 - Azul Egeu */
+  --gold: 45 93% 47%; /* #D4AF37 - Dourado Grego */
+  --marble: 35 15% 96%; /* #F5F3F0 - Mármore */
+  --parchment: 35 25% 94%; /* #F0EBE3 - Pergaminho */
+  
+  /* Variações do Azul Egeu */
+  --aegean-dark: 201 79% 35%; /* #0F5F8F */
+  --aegean-light: 201 60% 75%; /* #7BC3E8 */
+  --aegean-pale: 201 30% 92%; /* #E8F2F7 */
+  
+  /* Variações do Dourado */
+  --gold-dark: 45 85% 35%; /* #B8941F */
+  --gold-light: 45 70% 70%; /* #E8D068 */
+  --gold-pale: 45 40% 90%; /* #F0EBDA */
+  
+  /* Estados */
+  --success: 142 76% 36%; /* #16A34A - Verde oliva */
+  --error: 0 84% 60%; /* #DC2626 - Vermelho terracota */
+  --warning: 32 95% 44%; /* #D97706 - Âmbar */
+  
+  /* Sistema Shadcn */
+  --background: var(--marble);
+  --foreground: var(--aegean-dark);
+  --card: var(--parchment);
+  --card-foreground: var(--aegean-dark);
+  --popover: var(--parchment);
+  --popover-foreground: var(--aegean-dark);
+  --primary: var(--aegean);
+  --primary-foreground: var(--marble);
+  --secondary: var(--gold-pale);
+  --secondary-foreground: var(--aegean-dark);
+  --muted: var(--aegean-pale);
+  --muted-foreground: var(--aegean);
+  --accent: var(--gold);
+  --accent-foreground: var(--marble);
+  --destructive: var(--error);
+  --destructive-foreground: var(--marble);
+  --border: 35 20% 85%; /* #D6CFC4 */
+  --input: var(--border);
+  --ring: var(--aegean);
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 220 25% 8%;
+  --foreground: var(--marble);
+  --card: 220 20% 12%;
+  --card-foreground: var(--marble);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary: var(--aegean-light);
+  --primary-foreground: 220 25% 8%;
+  --secondary: var(--gold-light);
+  --secondary-foreground: 220 25% 8%;
+  --muted: 220 20% 15%;
+  --muted-foreground: 220 10% 65%;
+  --accent: var(--gold);
+  --accent-foreground: 220 25% 8%;
+  --destructive: 0 70% 60%;
+  --destructive-foreground: var(--marble);
+  --border: 220 15% 20%;
+  --input: var(--border);
+  --ring: var(--aegean-light);
+}
+
+/* Academia dos Números - Classes Padronizadas */
+.academia-container {
+  @apply bg-card border border-border rounded-2xl shadow-md p-6;
+}
+
+.academia-title {
+  @apply font-greek text-3xl font-bold text-primary mb-4;
+}
+
+.academia-subtitle {
+  @apply font-greek text-xl font-semibold text-muted-foreground mb-2;
+}
+
+.academia-text {
+  @apply text-card-foreground font-medium;
+}
+
+.academia-button-primary {
+  @apply bg-primary hover:bg-primary/90 text-primary-foreground font-greek font-semibold px-6 py-3 rounded-xl;
+}
+
+.academia-button-secondary {
+  @apply bg-accent hover:bg-accent/90 text-accent-foreground font-greek font-semibold px-6 py-3 rounded-xl;
+}
+
+.academia-input {
+  @apply bg-background border border-border text-foreground font-greek rounded-lg;
+}
+
+.academia-table-header {
+  @apply bg-primary text-primary-foreground font-greek font-bold text-center;
+}
+
+.academia-table-multiply {
+  @apply bg-accent text-accent-foreground font-greek font-black text-center;
+}
+
+.font-math {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+.math-op {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 900;
+  font-size: 1.25em;
+  line-height: 1;
+  display: inline-block;
+  padding: 0 0.1em;
+}
+
+.math-op-add    { color: #1d6aba; }
+.math-op-sub    { color: #c0392b; }
+.math-op-mul    { color: #7b22c9; }
+.math-op-div    { color: #1a7c4a; }
+.math-op-eq     { color: #5a5a5a; }
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: linear-gradient(135deg, hsl(var(--marble)) 0%, hsl(var(--parchment)) 100%);
+  color: hsl(var(--foreground));
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Apply grid background to all containers */
+*, *::before, *::after {
+  background-attachment: inherit;
+}
+
+/* Ensure all main containers inherit the grid background */
+#root {
+  background-image: inherit;
+  background-size: inherit;
+  background-position: inherit;
+  background-repeat: inherit;
+  background-attachment: inherit;
+  min-height: 100vh;
+}
+
+/* Typography */
+.font-greek {
+  font-family: 'Cinzel', serif;
+}
+
+.font-greek-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+/* Greek-inspired decorative elements */
+.marble-texture {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--sand-light)) 0%,
+    hsl(var(--sand-cream)) 25%,
+    hsl(var(--sand-medium)) 50%,
+    hsl(var(--sand-cream)) 75%,
+    hsl(var(--sand-light)) 100%
+  );
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.column-shadow {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Custom utility classes */
+.bg-success {
+  background-color: hsl(var(--success-bg));
+}
+
+.bg-success-light {
+  background-color: hsl(var(--success-light));
+}
+
+.bg-success-dark {
+  background-color: hsl(var(--success-dark));
+}
+
+.bg-error {
+  background-color: hsl(var(--error-bg));
+}
+
+.bg-error-light {
+  background-color: hsl(var(--error-light));
+}
+
+.bg-error-dark {
+  background-color: hsl(var(--error-dark));
+}
+
+.bg-warning-bg {
+  background-color: hsl(var(--warning-bg));
+}
+
+.text-success {
+  color: hsl(var(--success-bg));
+}
+
+.text-error {
+  color: hsl(var(--error-bg));
+}
+
+.text-warning {
+  color: hsl(var(--warning-bg));
+}
+
+.text-gold {
+  color: hsl(var(--gold-dark));
+}
+
+.text-aegean {
+  color: hsl(var(--aegean-dark));
+}
+
+.bg-gold {
+  background-color: hsl(var(--gold-medium));
+}
+
+.bg-aegean {
+  background-color: hsl(var(--aegean-medium));
+}
+
+.bg-marble {
+  background-color: hsl(var(--marble-cream));
+}
+
+/* Greek column effect */
+.greek-column {
+  background: linear-gradient(
+    to bottom,
+    hsl(var(--marble-white)) 0%,
+    hsl(var(--marble-cream)) 20%,
+    hsl(var(--marble-light)) 40%,
+    hsl(var(--marble-cream)) 60%,
+    hsl(var(--marble-white)) 100%
+  );
+  border-left: 4px solid hsl(var(--gold-medium));
+  border-right: 4px solid hsl(var(--gold-medium));
+  position: relative;
+}
+
+.greek-column::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    hsl(var(--gold-dark)),
+    hsl(var(--gold-medium)),
+    hsl(var(--gold-light)),
+    hsl(var(--gold-medium)),
+    hsl(var(--gold-dark))
+  );
+}
+
+.greek-column::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  right: -4px;
+  height: 8px;
+  background: linear-gradient(
+    to right,
+    hsl(var(--gold-dark)),
+    hsl(var(--gold-medium)),
+    hsl(var(--gold-light)),
+    hsl(var(--gold-medium)),
+    hsl(var(--gold-dark))
+  );
+}
+
+/* Greek border pattern */
+.greek-border {
+  border: 3px solid;
+  border-image: linear-gradient(
+    45deg,
+    hsl(var(--gold-light)),
+    hsl(var(--gold-medium)),
+    hsl(var(--gold-dark)),
+    hsl(var(--gold-medium)),
+    hsl(var(--gold-light))
+  ) 1;
+}
+
+/* Meander pattern */
+.greek-pattern {
+  background-image: 
+    linear-gradient(90deg, hsl(var(--gold-medium)) 50%, transparent 50%),
+    linear-gradient(hsl(var(--gold-medium)) 50%, transparent 50%);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  opacity: 0.1;
+}
+
+/* Academia dos Números - Custom Classes */
+.academia-container {
+  @apply bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl p-8 shadow-xl border border-slate-200;
+}
+
+.academia-title {
+  @apply font-greek text-3xl font-bold text-blue-700 mb-2;
+}
+
+.academia-subtitle {
+  @apply text-lg text-amber-600 font-medium italic;
+}
+
+.academia-button-primary {
+  @apply bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold transition-all duration-300;
+}
+
+.academia-button-accent {
+  @apply bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold transition-all duration-300;
+}
+
+.academia-table-multiply {
+  @apply bg-gradient-to-br from-amber-400 to-amber-500 text-white font-bold text-xl;
+}
+
+.academia-table-header {
+  @apply bg-gradient-to-br from-blue-600 to-blue-700 text-white font-bold text-lg;
+}
+
+/* Altura fixa para alinhamento dos blocos principais */
+@media (min-width: 1280px) {
+  .academia-main-blocks {
+    min-height: 750px;
+  }
+}
