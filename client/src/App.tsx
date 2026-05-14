@@ -7,6 +7,7 @@
 
 import { Switch, Route, Link, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
+import { updateMetaTags } from "./lib/seo";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,7 +27,7 @@ import { ArquimedesProvider, useArquimedesEvents } from "@/lib/arquimedes-events
 
 import NotFound from "@/pages/not-found";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Navigation() {
   const [location] = useLocation();
@@ -215,6 +216,10 @@ function Navigation() {
 function RouterInner() {
   const [location] = useLocation();
   const { event } = useArquimedesEvents();
+
+  useEffect(() => {
+    updateMetaTags(location);
+  }, [location]);
 
   return (
     <div className="min-h-screen flex flex-col relative bg-gradient-to-br from-amber-50 to-amber-100" style={{ isolation: 'isolate' }}>
