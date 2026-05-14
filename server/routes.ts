@@ -3,6 +3,32 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import OpenAI from "openai";
 import { z } from "zod";
+import rateLimit from "express-rate-limit";
+
+// Rate limiters
+const aiRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Muitas requisições. Aguarde alguns minutos e tente novamente." },
+});
+
+const calcRateLimit = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Muitas requisições. Aguarde um momento." },
+});
+
+// Sanitize text inputs before inserting into AI prompts
+function sanitizeInput(text: string): string {
+  return text
+    .replace(/[<>]/g, "")
+    .replace(/\bignore\b|\bforget\b|\bpretend\b|\bsystem\b|\bprompt\b/gi, "***")
+    .slice(0, 500);
+}
 
 const positiveInt = z.string().min(1).regex(/^\d+$/, "Apenas números inteiros positivos");
 const decimalOrInt = z.string().min(1).regex(/^\d+(\.\d+)?$/, "Número decimal inválido");
@@ -106,7 +132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Fast route: just returns the numeric result (no IA)
-  app.post("/api/calcular/resultado", (req, res) => {
+  app.post("/api/calcular/resultado", calcRateLimit, (req, res) => {
     const validated = validateCalc(req, res);
     if (!validated) return;
     try {
@@ -122,7 +148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Slow route: calls Groq to get the explanation
-  app.post("/api/calcular/explicacao", async (req, res) => {
+  app.post("/api/calcular/explicacao", aiRateLimit, async (req, res) => {
     const validated = validateCalc(req, res);
     if (!validated) return;
 
@@ -187,7 +213,7 @@ Regras:
   });
 
   // Arquimedes AI: free question on any page
-  app.post("/api/arquimedes/perguntar", async (req, res) => {
+  app.post("/api/arquimedes/perguntar", aiRateLimit, async (req, res) => {
     const schema = z.object({
       question: z.string().min(1).max(500),
       page: z.string().optional(),
@@ -196,7 +222,8 @@ Regras:
     if (!parsed.success) {
       return res.status(400).json({ message: "Pergunta inválida." });
     }
-    const { question, page } = parsed.data;
+    const { question: rawQuestion, page } = parsed.data;
+    const question = sanitizeInput(rawQuestion);
 
     const groqKey = process.env.GROQ_API_KEY;
     if (!groqKey) return res.json({ answer: "" });
@@ -250,7 +277,7 @@ Regras:
   });
 
   // Arquimedes AI: proactive reaction to student events
-  app.post("/api/arquimedes/evento", async (req, res) => {
+  app.post("/api/arquimedes/evento", aiRateLimit, async (req, res) => {
     const schema = z.object({
       event: z.string().min(1).max(100),
       context: z.record(z.string(), z.unknown()).optional(),
