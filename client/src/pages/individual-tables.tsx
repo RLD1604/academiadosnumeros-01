@@ -213,7 +213,7 @@ export default function IndividualTables() {
             {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
               <Button
                 key={num}
-                onClick={() => setSelectedTable(num)}
+                onClick={() => handleTableChange(num)}
                 variant={selectedTable === num ? 'default' : 'outline'}
                 className={`h-12 sm:h-14 lg:h-16 text-lg sm:text-xl lg:text-2xl font-bold rounded-xl transition-all duration-300 transform hover:scale-105 ${
                   selectedTable === num
