@@ -130,7 +130,7 @@ function Navigation() {
                 <div className="text-center">
                   <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➖</div>
                   <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Subtração</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Tabuadas de Subtração</div>
+                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Subtrair</div>
                 </div>
               </div>
             </Link>
