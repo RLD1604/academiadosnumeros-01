@@ -100,9 +100,9 @@ function Navigation() {
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">⚱️</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Tabela Completa</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Visão Geral</div>
+                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-1 xl:mb-2 leading-none">⚱️</div>
+                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-sm lg:text-sm xl:text-base leading-tight h-8 xl:h-10 flex items-center justify-center w-full">Tabela Completa</div>
+                  <div className="text-xs font-semibold opacity-90 h-4 xl:h-5 flex items-center justify-center w-full">Visão Geral</div>
                 </div>
               </div>
             </Link>
@@ -114,9 +114,9 @@ function Navigation() {
                   : 'bg-white text-gray-700 border-blue-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➕</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Adição</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Tabuadas de Soma</div>
+                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-1 xl:mb-2 leading-none">➕</div>
+                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-sm lg:text-sm xl:text-base leading-tight h-8 xl:h-10 flex items-center justify-center w-full">Adição</div>
+                  <div className="text-xs font-semibold opacity-90 h-4 xl:h-5 flex items-center justify-center w-full">Somar</div>
                 </div>
               </div>
             </Link>
@@ -128,9 +128,9 @@ function Navigation() {
                   : 'bg-white text-gray-700 border-red-300 hover:bg-red-50 hover:border-red-400 hover:text-red-700'
               }`}>
                 <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➖</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Subtração</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Subtrair</div>
+                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-1 xl:mb-2 leading-none">➖</div>
+                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-sm lg:text-sm xl:text-base leading-tight h-8 xl:h-10 flex items-center justify-center w-full">Subtração</div>
+                  <div className="text-xs font-semibold opacity-90 h-4 xl:h-5 flex items-center justify-center w-full">Subtrair</div>
                 </div>
               </div>
             </Link>
@@ -142,9 +142,9 @@ function Navigation() {
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>✕</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Tabuada</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Multiplicação</div>
+                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-1 xl:mb-2 leading-none" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>✕</div>
+                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-sm lg:text-sm xl:text-base leading-tight h-8 xl:h-10 flex items-center justify-center w-full">Tabuada</div>
+                  <div className="text-xs font-semibold opacity-90 h-4 xl:h-5 flex items-center justify-center w-full">Multiplicação</div>
                 </div>
               </div>
             </Link>
@@ -156,9 +156,9 @@ function Navigation() {
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➗</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Divisão</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Dividir e Conquistar</div>
+                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-1 xl:mb-2 leading-none">➗</div>
+                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-sm lg:text-sm xl:text-base leading-tight h-8 xl:h-10 flex items-center justify-center w-full">Divisão</div>
+                  <div className="text-xs font-semibold opacity-90 h-4 xl:h-5 flex items-center justify-center w-full">Conquistar</div>
                 </div>
               </div>
             </Link>
@@ -169,9 +169,9 @@ function Navigation() {
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">🏛️</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Desafio</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Teste Cronometrado</div>
+                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-1 xl:mb-2 leading-none">🏛️</div>
+                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-sm lg:text-sm xl:text-base leading-tight h-8 xl:h-10 flex items-center justify-center w-full">Desafio</div>
+                  <div className="text-xs font-semibold opacity-90 h-4 xl:h-5 flex items-center justify-center w-full">Cronometrado</div>
                 </div>
               </div>
             </Link>
@@ -182,9 +182,9 @@ function Navigation() {
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">🕐</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Relógio</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Aprenda Horas</div>
+                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-1 xl:mb-2 leading-none">🕐</div>
+                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-sm lg:text-sm xl:text-base leading-tight h-8 xl:h-10 flex items-center justify-center w-full">Relógio</div>
+                  <div className="text-xs font-semibold opacity-90 h-4 xl:h-5 flex items-center justify-center w-full">Aprenda Horas</div>
                 </div>
               </div>
             </Link>
@@ -195,9 +195,9 @@ function Navigation() {
                   : 'bg-amber-50 text-gray-700 border-amber-300 hover:bg-amber-100 hover:border-amber-500 hover:text-amber-800'
               }`}>
                 <div className="text-center">
-                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">🧮</div>
-                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-base lg:text-lg xl:text-lg leading-tight">Calc. IA</div>
-                  <div className="text-xs xs:text-xs sm:text-xs md:text-xs lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Sem limite</div>
+                  <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-1 xl:mb-2 leading-none">🧮</div>
+                  <div className="font-greek font-bold text-xs xs:text-xs sm:text-sm md:text-sm lg:text-sm xl:text-base leading-tight h-8 xl:h-10 flex items-center justify-center w-full">Calc. IA</div>
+                  <div className="text-xs font-semibold opacity-90 h-4 xl:h-5 flex items-center justify-center w-full">Sem limite</div>
                 </div>
               </div>
             </Link>
