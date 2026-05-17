@@ -377,6 +377,7 @@ body::before {
   .academia-main-blocks {
     min-height: 750px;
   }
+}
 
 @layer utilities {
   .bounce-gentle {
