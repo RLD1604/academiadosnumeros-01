@@ -94,102 +94,102 @@ function Navigation() {
           {/* Navigation columns */}
           <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 xl:grid-cols-8 gap-2 xs:gap-3 sm:gap-4 md:gap-3 lg:gap-4 max-w-7xl mx-auto">
             <Link href="/">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
+              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/" 
                   ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
                   <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">⚱️</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Tabela Completa</div>
+                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Tabela Completa</div>
                   <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Visão Geral</div>
                 </div>
               </div>
             </Link>
 
             <Link href="/adicao">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
+              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/adicao" 
                   ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
                   : 'bg-white text-gray-700 border-blue-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
                   <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➕</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Adição</div>
+                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Adição</div>
                   <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Tabuadas de Soma</div>
                 </div>
               </div>
             </Link>
 
             <Link href="/subtracao">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
+              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/subtracao" 
                   ? 'bg-red-600 text-white border-red-700 shadow-red-200' 
                   : 'bg-white text-gray-700 border-red-300 hover:bg-red-50 hover:border-red-400 hover:text-red-700'
               }`}>
                 <div className="text-center">
                   <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➖</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Subtração</div>
+                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Subtração</div>
                   <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Subtrair</div>
                 </div>
               </div>
             </Link>
 
             <Link href="/tabuadas">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
+              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/tabuadas" 
                   ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
                   <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>✕</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Tabuada</div>
+                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Tabuada</div>
                   <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Multiplicação</div>
                 </div>
               </div>
             </Link>
 
             <Link href="/divisao">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
+              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/divisao" 
                   ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
                   <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">➗</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Divisão</div>
+                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Divisão</div>
                   <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Dividir e Conquistar</div>
                 </div>
               </div>
             </Link>
             <Link href="/simulado">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
+              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/simulado" 
                   ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
                   <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">🏛️</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Desafio</div>
+                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Desafio</div>
                   <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Teste Cronometrado</div>
                 </div>
               </div>
             </Link>
             <Link href="/relogio">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
+              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/relogio" 
                   ? 'bg-blue-600 text-white border-blue-700 shadow-blue-200' 
                   : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700'
               }`}>
                 <div className="text-center">
                   <div className="text-lg xs:text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl mb-0.5 xs:mb-1 sm:mb-1 md:mb-1.5 lg:mb-2">🕐</div>
-                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl leading-tight">Relógio</div>
+                  <div className="font-greek font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl leading-tight">Relógio</div>
                   <div className="text-xs xs:text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm font-semibold opacity-90 leading-tight">Aprenda Horas</div>
                 </div>
               </div>
             </Link>
             <Link href="/calculadora">
-              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
+              <div className={`h-24 xs:h-28 sm:h-32 md:h-34 lg:h-36 xl:h-40 px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-6 py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer border-2 shadow-md flex flex-col justify-center ${
                 location === "/calculadora" 
                   ? 'bg-amber-600 text-white border-amber-700 shadow-amber-200' 
                   : 'bg-amber-50 text-gray-700 border-amber-300 hover:bg-amber-100 hover:border-amber-500 hover:text-amber-800'
