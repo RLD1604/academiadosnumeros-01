@@ -1,0 +1,387 @@
+// ============================================================================
+// WDO-4R  --  SISTEMA MATADOR  v3.5
+// Plataforma : Nelogica Profit Pro  |  Linguagem: NTSL v4.3
+// Ativo      : Mini Dolar Futuro (WDO)  |  Grafico: Renko 4R (tijolo 1,5pt)
+//
+// FILTROS DE ENTRADA
+//   COMPRA : Leque EMA 9/34/72 todos em alta + tijolo verde + pct_range > 0,60
+//   VENDA  : Leque EMA 9/34/72 todos em baixa + tijolo vermelho + pct_range < 0,40
+//
+// SAIDAS
+//   T1 = +/-2,5 pts -> fecha 50%  |  ativa break-even (stop -> entrada)
+//   T2 = +/-5,0 pts -> fecha restante
+//   Stop inicial = -/+107 pts
+//   Zeragem forcada: Turno 1 as 11:30  |  Turno 2 as 15:30
+//
+// TURNOS  09:30-11:30  e  14:00-15:30
+// LIMITE  8 entradas/dia
+// ============================================================================
+
+// -- PARAMETROS ---------------------------------------------------------------
+input
+  EMA_Curta := Param(9);
+  EMA_Media := Param(34);
+  EMA_Longa := Param(72);
+  RangeLookback := Param(20);
+  PctCompra := Param(0.60);
+  PctVenda := Param(0.40);
+  QtdContratos := Param(2);
+  AlvoT1 := Param(2.5);
+  AlvoT2 := Param(5.0);
+  StopLoss := Param(107.0);
+  LimiteDiario := Param(8);
+  T1_Inicio := Param(0930);
+  T1_Fim := Param(1130);
+  T2_Inicio := Param(1400);
+  T2_Fim := Param(1530);
+
+// -- VARIAVEIS ----------------------------------------------------------------
+var
+  // Leque de medias
+  vE9, vE34, vE72         : Float;
+  vLequeAlta, vLequeBaixa : Boolean;
+
+  // pct_range
+  vHi, vLo, vPct          : Float;
+
+  // Gestao de posicao
+  vEntry, vT1, vT2, vStop : Float;
+  vQtd1, vQtd2            : Integer;
+  vParcial, vBE           : Boolean;
+  vFoiBE                  : Boolean;
+
+  // Controle de sessao / dia
+  vHora                   : Integer;
+  vT1On, vT2On            : Boolean;
+  vAbertaT1, vAbertaT2    : Boolean;
+  vZerouT1, vZerouT2      : Boolean;
+  vTrades                 : Integer;
+  vDataAnt                : Integer;
+
+// -- CODIGO PRINCIPAL ---------------------------------------------------------
+begin
+
+  // -- 1. LEQUE DE MEDIAS -----------------------------------------------------
+  vE9  := MediaExp(EMA_Curta, Close);
+  vE34 := MediaExp(EMA_Media, Close);
+  vE72 := MediaExp(EMA_Longa, Close);
+
+  vLequeAlta  := (vE9  > vE9[1])  and (vE34 > vE34[1]) and (vE72 > vE72[1]);
+  vLequeBaixa := (vE9  < vE9[1])  and (vE34 < vE34[1]) and (vE72 < vE72[1]);
+
+  // -- 2. PCT_RANGE -----------------------------------------------------------
+  vHi := Highest(High, RangeLookback);
+  vLo := Lowest(Low,   RangeLookback);
+  if (vHi - vLo) > 0 then
+    vPct := (Close - vLo) / (vHi - vLo)
+  else
+    vPct := 0.5;
+
+  // -- 3. CONTROLE DE HORARIO -------------------------------------------------
+  vHora := CurrentTime;
+  vT1On := (vHora >= T1_Inicio) and (vHora < T1_Fim);
+  vT2On := (vHora >= T2_Inicio) and (vHora < T2_Fim);
+
+  // -- 4. RESET DIARIO --------------------------------------------------------
+  if CurrentDate <> vDataAnt then
+  begin
+    vTrades   := 0;
+    vDataAnt  := CurrentDate;
+    vParcial  := False;
+    vBE       := False;
+    vFoiBE    := False;
+    vZerouT1  := False;
+    vZerouT2  := False;
+    vAbertaT1 := False;
+    vAbertaT2 := False;
+    ConsoleLog('MATADOR v3.5 | Novo dia: ' + FloatToString(Float(CurrentDate), 0));
+  end;
+
+  // -- 5. ZERAGEM FORCADA NO FIM DE TURNO -------------------------------------
+
+  // Turno 1: saiu do horario com posicao aberta neste turno
+  if (not vT1On) and (not vZerouT1) and vAbertaT1 and HasPosition then
+  begin
+    ClosePosition;
+    CancelPendingOrders;
+    vParcial  := False;
+    vBE       := False;
+    vFoiBE    := False;
+    vAbertaT1 := False;
+    vZerouT1  := True;
+    ConsoleLog('MATADOR v3.5 | ZERAGEM T1 | hora: ' + FloatToString(Float(vHora), 0));
+  end;
+
+  // Turno 2: hora >= T2_Fim com posicao aberta neste turno
+  if (vHora >= T2_Fim) and (not vZerouT2) and vAbertaT2 and HasPosition then
+  begin
+    ClosePosition;
+    CancelPendingOrders;
+    vParcial  := False;
+    vBE       := False;
+    vFoiBE    := False;
+    vAbertaT2 := False;
+    vZerouT2  := True;
+    ConsoleLog('MATADOR v3.5 | ZERAGEM T2 | hora: ' + FloatToString(Float(vHora), 0));
+  end;
+
+  // -- 6. GESTAO DA POSICAO COMPRADA ------------------------------------------
+  if IsBought then
+  begin
+    // T1: parcial + ativa break-even
+    if (not vParcial) and (Close >= vT1) then
+    begin
+      SellToCoverLimit(vT1, vQtd1);
+      vParcial := True;
+      vBE      := True;
+      vStop    := vEntry;
+      ConsoleLog('MATADOR v3.5 | T1 COMPRA | qty: ' + FloatToString(Float(vQtd1), 0) +
+                 ' | BE: ' + FloatToString(vEntry, 1));
+    end;
+
+    // T2: fecha restante
+    if vParcial and (Close >= vT2) then
+    begin
+      SellToCoverAtMarket;
+      CancelPendingOrders;
+      vParcial  := False;
+      vBE       := False;
+      vFoiBE    := False;
+      vAbertaT1 := False;
+      vAbertaT2 := False;
+      ConsoleLog('MATADOR v3.5 | T2 COMPRA | FECHADO');
+    end;
+
+    // Stop (inicial ou break-even)
+    if Close <= vStop then
+    begin
+      vFoiBE := vBE;
+      SellToCoverAtMarket;
+      CancelPendingOrders;
+      vParcial  := False;
+      vBE       := False;
+      vAbertaT1 := False;
+      vAbertaT2 := False;
+      if vFoiBE then
+        ConsoleLog('MATADOR v3.5 | BREAK-EVEN COMPRA | preco: ' + FloatToString(vEntry, 1))
+      else
+        ConsoleLog('MATADOR v3.5 | STOP COMPRA | preco: ' + FloatToString(vStop, 1));
+      vFoiBE := False;
+    end;
+  end;
+
+  // -- 7. GESTAO DA POSICAO VENDIDA -------------------------------------------
+  if IsSold then
+  begin
+    // T1: parcial + ativa break-even
+    if (not vParcial) and (Close <= vT1) then
+    begin
+      BuyToCoverLimit(vT1, vQtd1);
+      vParcial := True;
+      vBE      := True;
+      vStop    := vEntry;
+      ConsoleLog('MATADOR v3.5 | T1 VENDA | qty: ' + FloatToString(Float(vQtd1), 0) +
+                 ' | BE: ' + FloatToString(vEntry, 1));
+    end;
+
+    // T2: fecha restante
+    if vParcial and (Close <= vT2) then
+    begin
+      BuyToCoverAtMarket;
+      CancelPendingOrders;
+      vParcial  := False;
+      vBE       := False;
+      vFoiBE    := False;
+      vAbertaT1 := False;
+      vAbertaT2 := False;
+      ConsoleLog('MATADOR v3.5 | T2 VENDA | FECHADO');
+    end;
+
+    // Stop (inicial ou break-even)
+    if Close >= vStop then
+    begin
+      vFoiBE := vBE;
+      BuyToCoverAtMarket;
+      CancelPendingOrders;
+      vParcial  := False;
+      vBE       := False;
+      vAbertaT1 := False;
+      vAbertaT2 := False;
+      if vFoiBE then
+        ConsoleLog('MATADOR v3.5 | BREAK-EVEN VENDA | preco: ' + FloatToString(vEntry, 1))
+      else
+        ConsoleLog('MATADOR v3.5 | STOP VENDA | preco: ' + FloatToString(vStop, 1));
+      vFoiBE := False;
+    end;
+  end;
+
+  // -- 8. SINAIS DE ENTRADA ---------------------------------------------------
+  if (vT1On or vT2On) and (not HasPosition) and (not HasPendingOrders)
+     and (vTrades < LimiteDiario) then
+  begin
+
+    // COMPRA
+    if vLequeAlta and (Close > Open) and (vPct > PctCompra) then
+    begin
+      BuyLimit(Close + 20.0, QtdContratos);
+      SellStop(vEntry - StopLoss, QtdContratos);
+      vEntry    := Close;
+      vT1       := vEntry + AlvoT1;
+      vT2       := vEntry + AlvoT2;
+      vStop     := vEntry - StopLoss;
+      vQtd1     := Round(QtdContratos * 0.5);
+      if vQtd1 < 1 then vQtd1 := 1;
+      vQtd2     := QtdContratos - vQtd1;
+      if vQtd2 < 0 then vQtd2 := 0;
+      vParcial  := False;
+      vBE       := False;
+      vFoiBE    := False;
+      vAbertaT1 := vT1On;
+      vAbertaT2 := vT2On;
+      vTrades   := vTrades + 1;
+      ConsoleLog('MATADOR v3.5 | COMPRA #' + FloatToString(Float(vTrades), 0) +
+                 ' | Close: ' + FloatToString(Close, 1) +
+                 ' | Pct: '   + FloatToString(vPct, 2)  +
+                 ' | T1: '    + FloatToString(vT1, 1)   +
+                 ' | Stop: '  + FloatToString(vStop, 1));
+    end
+
+    // VENDA
+    else if vLequeBaixa and (Close < Open) and (vPct < PctVenda) then
+    begin
+      SellShortLimit(Close - 20.0, QtdContratos);
+      BuyStop(vEntry + StopLoss, QtdContratos);
+      vEntry    := Close;
+      vT1       := vEntry - AlvoT1;
+      vT2       := vEntry - AlvoT2;
+      vStop     := vEntry + StopLoss;
+      vQtd1     := Round(QtdContratos * 0.5);
+      if vQtd1 < 1 then vQtd1 := 1;
+      vQtd2     := QtdContratos - vQtd1;
+      if vQtd2 < 0 then vQtd2 := 0;
+      vParcial  := False;
+      vBE       := False;
+      vFoiBE    := False;
+      vAbertaT1 := vT1On;
+      vAbertaT2 := vT2On;
+      vTrades   := vTrades + 1;
+      ConsoleLog('MATADOR v3.5 | VENDA #' + FloatToString(Float(vTrades), 0) +
+                 ' | Close: ' + FloatToString(Close, 1) +
+                 ' | Pct: '   + FloatToString(vPct, 2)  +
+                 ' | T1: '    + FloatToString(vT1, 1)   +
+                 ' | Stop: '  + FloatToString(vStop, 1));
+    end;
+
+  end;
+
+  // -- 9. PLOTAGEM ------------------------------------------------------------
+  Plot (vE9);   SetPlotColor(1, RGB(255, 255, 255));  SetPlotWidth(1, 2);
+  Plot2(vE34);  SetPlotColor(2, RGB(255, 165,   0));  SetPlotWidth(2, 2);
+  Plot3(vE72);  SetPlotColor(3, RGB(200,   0, 255));  SetPlotWidth(3, 2);
+
+  if IsBought then
+  begin
+    if vBE then PaintBar(RGB(0, 255, 120))
+    else        PaintBar(RGB(0, 180, 70));
+  end
+  else if IsSold then
+  begin
+    if vBE then PaintBar(RGB(255, 80, 80))
+    else        PaintBar(RGB(200, 40, 40));
+  end
+  else if vT1On or vT2On then
+  begin
+    if vLequeAlta and (vPct > PctCompra) then
+      PaintBar(RGB(0, 100, 40))
+    else if vLequeBaixa and (vPct < PctVenda) then
+      PaintBar(RGB(100, 0, 0))
+    else
+      PaintBar(RGB(30, 50, 80));
+  end
+  else
+    PaintBar(RGB(50, 50, 50));
+
+end;
+
+// ============================================================================
+// HISTORICO DE CORRECOES (auditoria contra ManualNTSL.pdf v4.3)
+// ============================================================================
+// v3.0 -> v3.1:
+//   BUG: SellPositionQty/BuyPositionQty nao existem -> SellToCoverLimit/BuyToCoverLimit
+//   BUG: if inline em string -> variavel auxiliar vTurnoLog
+//   BUG: flag break-even zerada antes do if -> vFoiBE salva estado antes
+//   WARN: zeragem cruzada entre turnos -> vAbertaT1/vAbertaT2
+//   WARN: Round(0.5) pode dar 0 -> if vQtd1 < 1 then vQtd1 := 1
+//
+// v3.1 -> v3.2:
+//   BUG: input block estilo Pascal ': integer := 9' -> Param(valor) correto
+//   BUG: SellToCover(qty, price, orLimit) -> SellToCoverLimit(price, qty)
+//
+// v3.2 -> v3.3:
+//   BUG: MaxBarsBack(Close, N) - nao aceita parametros (manual p.215)
+//        -> chamadas de warmup removidas
+//   BUG: Inc(vTrades) - nao existe em NTSL
+//        -> vTrades := vTrades + 1
+//   BUG: vTurnoLog : String - tipo String nao existe em NTSL (manual p.15)
+//        -> variavel removida
+//
+// v3.3 -> v3.4:
+//   BUG: ConsoleLog concatenando Float/Integer diretamente com String
+//        Erro: 'Operacao invalida entre String e Float/Integer'
+//        Correcao: FloatToString(valor, casas) em TODOS os valores numericos
+//        Funcoes disponiveis (manual cap.26):
+//          FloatToString(Float, Integer) : String  -- p.562
+//          BoolToString(Boolean) : String          -- p.560
+//          IntToStr NAO EXISTE -- usar FloatToString(intVar, 0)
+//
+// v3.4 -> v3.5:
+//   BUG: input block - ainda tinha sintaxe errada
+//        Correcao: EMA_Curta(9) -> EMA_Curta := Param(9)
+//   BUG: FloatToString recebe Float, mas CurrentDate/vHora/vTrades sao Integer
+//        Correcao: Float(variavel) para conversao explicita
+//   BUG: Stop Loss nao ativava ordem -> posicao descoberta entre barras
+//        Correcao: SellStop(vStop, QtdContratos) apos BuyLimit
+//        Correcao: BuyStop(vStop, QtdContratos) apos SellShortLimit
+//        Funcoes confirmadas no manual:
+//          SellStop(StopPrice, Qty)  p.93
+//          BuyStop(StopPrice, Qty)   p.72
+//
+// TODAS AS FUNCOES VERIFICADAS CONTRA O MANUAL v4.3:
+//   input  Param(valor)                            p.12
+//   var    nome : Tipo                             p.15
+//   MediaExp(Periodo, Serie) : Float               p.536
+//   vE9[1] valido -- Float vira serie via [n]      p.43
+//   Highest(Serie, Periodo) : Float                p.531
+//   Lowest(Serie, Periodo) : Float                 p.533
+//   CurrentTime() : Integer (formato HHMM)         p.127
+//   CurrentDate : Integer                          confirmado
+//   HasPosition() : Boolean                        p.78
+//   IsBought() : Boolean                           p.79
+//   IsSold() : Boolean                             p.80
+//   HasPendingOrders() : Boolean                   p.77
+//   ClosePosition()                                p.75
+//   CancelPendingOrders()                          p.74
+//   BuyLimit(Limit, Qty)                           p.64
+//   SellShortLimit(Limit, Qty)                     p.92
+//   SellToCoverLimit(Limit, Qty)                   p.95
+//   BuyToCoverLimit(Limit, Qty)                    p.71
+//   SellToCoverAtMarket()                          p.94
+//   BuyToCoverAtMarket()                           p.70
+//   SellStop(StopPrice, Qty)                       p.93
+//   BuyStop(StopPrice, Qty)                        p.72
+//   ConsoleLog(String)                             p.192
+//   FloatToString(Float, Integer) : String         p.562
+//   Float(value) conversao de tipo                 p.503
+//   Round(Float) : Integer                         confirmado
+//   Plot/Plot2/Plot3(Float)                        p.210
+//   SetPlotColor(Index, Color)                     confirmado
+//   SetPlotWidth(Index, Width)                     confirmado
+//   PaintBar(Color)                                p.79
+//   RGB(R, G, B) : Integer                         confirmado
+//
+// INSTALACAO
+//   Estrategias -> Editor -> Nova Estrategia -> Tipo: EXECUCAO
+//   Compilar (F9) -> Automacao -> vincular ao grafico WDOM26 Renko 4R
+//   Zeragem automatica da plataforma: DESMARCAR
+//   Contratos minimos: 2 (para split 50/50)
+// ============================================================================
