@@ -427,8 +427,8 @@ export default function Calculadora() {
         <p className="text-amber-600 text-sm mt-0.5">Calcule e aprenda com Arquimedes</p>
       </div>
 
-      {/* ── Two-column grid on desktop ──────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* ── Two-column grid on tablet/desktop ───────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
 
         {/* ═══ LEFT COLUMN: Form ═══════════════════════════════ */}
         <div className="space-y-4">
@@ -446,7 +446,7 @@ export default function Calculadora() {
                   onClick={() => handleOpChange(op.value)}
                   className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
                     operation === op.value
-                      ? `${op.activeBg} shadow-md ring-2 ${op.ring} ring-offset-1 scale-105`
+                      ? `${op.activeBg} shadow-md ring-2 ${op.ring} ring-offset-1 lg:scale-105`
                       : `${op.bg}`
                   }`}
                 >
@@ -493,7 +493,7 @@ export default function Calculadora() {
                     onChange={e => handleNumberChange(index, e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleCalcular()}
                     placeholder={index === 0 ? 'Primeiro número' : `Número ${index + 1}`}
-                    className="flex-1 text-center text-xl font-bold border-2 border-amber-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 bg-amber-50 transition-colors placeholder:text-gray-300"
+                    className="flex-1 min-w-0 text-center text-xl font-bold border-2 border-amber-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 bg-amber-50 transition-colors placeholder:text-gray-300"
                   />
 
                   {/* Remove button */}
@@ -543,7 +543,7 @@ export default function Calculadora() {
           <Button
             onClick={handleCalcular}
             disabled={isLoading}
-            className="w-full py-4 text-base font-bold rounded-xl bg-amber-600 hover:bg-amber-700 text-white border-2 border-amber-700 shadow-md transition-all duration-200 hover:scale-105 disabled:scale-100"
+            className="w-full py-4 text-base font-bold rounded-xl bg-amber-600 hover:bg-amber-700 text-white border-2 border-amber-700 shadow-md transition-all duration-200 hover:shadow-lg hover:brightness-105"
           >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
@@ -607,7 +607,7 @@ export default function Calculadora() {
                 <p className="text-sm font-mono text-gray-500 break-all leading-relaxed">
                   {lastCalc!.numbers.join(` ${lastCalc!.op.symbol} `)} =
                 </p>
-                <div className={`text-6xl font-black font-mono mt-1 break-all ${lastCalc!.op.text}`}>
+                <div className={`text-4xl sm:text-5xl xl:text-6xl font-black font-mono mt-1 break-all ${lastCalc!.op.text}`}>
                   {resultData!.result}
                 </div>
               </div>
@@ -619,7 +619,7 @@ export default function Calculadora() {
                     <span className="text-purple-500 font-bold text-sm">Resto:</span>
                     <span className="text-2xl font-black text-purple-700 font-mono">{resultData!.remainder}</span>
                   </div>
-                  <p className="text-purple-500 text-xs mt-0.5">
+                  <p className="text-purple-500 text-xs mt-0.5 break-all text-center px-2">
                     {lastCalc!.numbers[0]} = {resultData!.result} × {lastCalc!.numbers[1]} + {resultData!.remainder}
                   </p>
                 </div>
@@ -665,18 +665,18 @@ export default function Calculadora() {
                     {longSteps ? (
                       <div className="space-y-2">
 
-                        {/* Brazilian "chapéu" notation */}
-                        <div className="flex justify-center pb-1">
-                          <div className="font-mono">
+                        {/* Brazilian "chapéu" notation — rola horizontal se o dividendo for muito longo */}
+                        <div className="flex justify-center pb-1 overflow-x-auto">
+                          <div className="font-mono w-max">
                             <div className="flex items-stretch">
-                              <div className="border-b-2 border-r-2 border-gray-700 pr-4 pb-1 text-2xl font-black text-gray-800 tracking-widest">
+                              <div className="border-b-2 border-r-2 border-gray-700 pr-3 sm:pr-4 pb-1 text-xl sm:text-2xl font-black text-gray-800 tracking-wide sm:tracking-widest whitespace-nowrap">
                                 {dividend}
                               </div>
-                              <div className="border-b-2 border-gray-700 pl-4 pb-1 text-2xl font-black text-purple-700">
+                              <div className="border-b-2 border-gray-700 pl-3 sm:pl-4 pb-1 text-xl sm:text-2xl font-black text-purple-700 whitespace-nowrap">
                                 {divisor}
                               </div>
                             </div>
-                            <div className="text-right pr-0 pl-4 pt-1 text-xl font-black text-purple-800 tracking-widest">
+                            <div className="text-right pr-0 pl-3 sm:pl-4 pt-1 text-lg sm:text-xl font-black text-purple-800 tracking-wide sm:tracking-widest whitespace-nowrap">
                               {quotient}
                               {remainder !== '0' && (
                                 <span className="text-sm font-bold text-purple-400 ml-1">(r. {remainder})</span>
@@ -701,21 +701,21 @@ export default function Calculadora() {
                             </div>
                             <div className="px-3 py-2 font-mono text-sm space-y-0.5">
                               <div className="flex items-center gap-2">
-                                <span className="text-purple-400 text-xs w-3">÷</span>
-                                <span className="text-gray-700">
+                                <span className="text-purple-400 text-xs w-3 flex-shrink-0">÷</span>
+                                <span className="text-gray-700 break-all min-w-0">
                                   {step.partialDividend} ÷ {divisor} ={' '}
                                   <span className="font-black text-purple-800 text-base">{step.quotientDigit}</span>
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <span className="text-purple-400 text-xs w-3">×</span>
-                                <span className="text-gray-600">
+                                <span className="text-purple-400 text-xs w-3 flex-shrink-0">×</span>
+                                <span className="text-gray-600 break-all min-w-0">
                                   {step.quotientDigit} × {divisor} = {step.product}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 border-t border-purple-100 pt-0.5 mt-0.5">
-                                <span className="text-purple-400 text-xs w-3">−</span>
-                                <span className="text-gray-600">
+                                <span className="text-purple-400 text-xs w-3 flex-shrink-0">−</span>
+                                <span className="text-gray-600 break-all min-w-0">
                                   {step.partialDividend} − {step.product} ={' '}
                                   <span className="font-bold text-gray-800">{step.remainder}</span>
                                 </span>
@@ -776,7 +776,7 @@ export default function Calculadora() {
                     {longSteps && (
                       <div className="rounded-xl px-4 py-3 bg-purple-100 border-2 border-purple-300">
                         <p className="text-xs font-bold text-gray-500 mb-1">✅ Verificação</p>
-                        <p className="font-mono font-bold text-base text-purple-800">
+                        <p className="font-mono font-bold text-base text-purple-800 break-all">
                           {remainder === '0'
                             ? `${quotient} × ${divisor} = ${dividend} ✓`
                             : `${quotient} × ${divisor} + ${remainder} = ${dividend} ✓`}
