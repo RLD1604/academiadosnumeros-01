@@ -100,6 +100,8 @@ const tips: AssistantTip[] = [
 
 export default function VirtualAssistant({ currentPage, onClose, isVisible = true, event }: VirtualAssistantProps) {
   const [isOpen, setIsOpen] = useState(true);
+  // Em telas pequenas o balão cobriria a página inteira — inicia minimizado como ícone
+  const [isMinimized, setIsMinimized] = useState(() => typeof window !== 'undefined' && window.innerWidth < 1024);
   const [currentTip, setCurrentTip] = useState<AssistantTip>(defaultTip);
   const [question, setQuestion] = useState('');
   const [aiAnswer, setAiAnswer] = useState('');
@@ -154,6 +156,7 @@ export default function VirtualAssistant({ currentPage, onClose, isVisible = tru
       });
 
     if (!isOpen) setIsOpen(true);
+    setIsMinimized(false);
 
     return () => { cancelled = true; };
   }, [event]);
@@ -161,7 +164,7 @@ export default function VirtualAssistant({ currentPage, onClose, isVisible = tru
   if (!isOpen) return null;
 
   const handleClose = () => {
-    setIsOpen(false);
+    setIsMinimized(true);
     onClose?.();
   };
 
@@ -218,8 +221,24 @@ export default function VirtualAssistant({ currentPage, onClose, isVisible = tru
     displayedMessage = currentTip.message;
   }
 
+  if (isMinimized) {
+    return (
+      <button
+        onClick={() => setIsMinimized(false)}
+        aria-label="Abrir assistente Arquimedes"
+        data-testid="assistant-minimized"
+        className="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full border-4 border-white shadow-lg bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-2xl hover:scale-110 transition-transform"
+      >
+        🧙‍♂️
+        <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-yellow-400 flex items-center justify-center text-[10px] animate-pulse">
+          ✨
+        </span>
+      </button>
+    );
+  }
+
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-80">
+    <div className="fixed bottom-4 right-4 z-50 w-80 max-w-[calc(100vw-2rem)]">
       <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl shadow-2xl border-4 border-blue-200 relative">
         {/* Arquimedes Avatar */}
         <div className="absolute -top-8 -left-8 w-16 h-16 rounded-full border-4 border-white shadow-lg bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-3xl">
