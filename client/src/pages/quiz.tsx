@@ -730,22 +730,22 @@ export default function Quiz() {
         <p className="academia-subtitle text-sm">Escolha seu desafio e teste seus conhecimentos</p>
       </div>
 
-      {/* 3-column body */}
-      <div className="flex gap-3 items-start">
+      {/* Body: empilhado em coluna única no mobile/tablet, 3 colunas no desktop (lg+) */}
+      <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-start">
 
         {/* ── LEFT: Configurações ── */}
-        <aside className="w-48 lg:w-52 flex-shrink-0 flex flex-col gap-2 sticky top-2">
+        <aside className="order-1 w-full lg:w-52 lg:flex-shrink-0 flex flex-col gap-2 lg:sticky lg:top-2">
 
           {/* Tipo de desafio */}
           <div className="academia-container p-3">
             <p className="font-greek font-bold text-xs text-muted-foreground uppercase tracking-wide mb-2">Tipo de Desafio</p>
-            <div className="flex flex-col gap-1">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-1 gap-1">
               {quizTypeOptions.map(opt => (
                 <button
                   key={opt.value}
                   onClick={() => handleTabChange(opt.value)}
                   data-testid={`tab-${opt.value}`}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-left text-sm font-greek font-semibold transition-all ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg text-left text-xs sm:text-sm font-greek font-semibold transition-all ${
                     settings.quizType === opt.value
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'hover:bg-muted text-card-foreground'
@@ -758,7 +758,9 @@ export default function Quiz() {
             </div>
           </div>
 
-          {/* Quantidade de questões */}
+          {/* Quantidade de questões + operações do misto: lado a lado em tablet, empilhados no desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+
           <div className="academia-container p-3">
             <p className="font-greek font-bold text-xs text-muted-foreground uppercase tracking-wide mb-2">Questões</p>
             {settings.quizType === 'squares' || settings.quizType === 'cubes' ? (
@@ -802,6 +804,8 @@ export default function Quiz() {
             </div>
           )}
 
+          </div>
+
           {/* Novo desafio */}
           <Button
             onClick={resetQuiz}
@@ -813,7 +817,7 @@ export default function Quiz() {
         </aside>
 
         {/* ── CENTER: Questões ── */}
-        <div className="flex-1 min-w-0 flex flex-col gap-3">
+        <div className="order-3 lg:order-2 w-full flex-1 min-w-0 flex flex-col gap-3">
 
           {/* Heading */}
           <div className="academia-container p-3">
@@ -833,7 +837,7 @@ export default function Quiz() {
 
           {/* Questions grid */}
           <div className="academia-container p-3">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
               {quizState.questions.map((question, index) => (
                 <div key={question.id} className="bg-background rounded-xl p-3 border-2 border-border">
                   <div className="text-center mb-2">
@@ -844,6 +848,7 @@ export default function Quiz() {
                   </div>
                   <input
                     type="number"
+                    inputMode="numeric"
                     value={question.userAnswer}
                     onChange={(e) => handleAnswerChange(question.id, e.target.value)}
                     disabled={(timer.isConfigured && !timer.isActive) || quizState.isCompleted}
@@ -888,16 +893,16 @@ export default function Quiz() {
           {quizState.isCompleted && (
             <div className="academia-container p-4">
               <h3 className="academia-subtitle text-center mb-4 text-base">📊 Resultado Final</h3>
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="text-center p-3 bg-green-100 rounded-xl border border-green-200">
+              <div className="grid grid-cols-1 xs:grid-cols-3 gap-2 sm:gap-3 mb-4">
+                <div className="text-center p-2 sm:p-3 bg-green-100 rounded-xl border border-green-200">
                   <div className="text-3xl font-bold text-green-600 font-greek" data-testid="stats-correct">{quizState.stats.correct}</div>
                   <div className="text-green-800 font-semibold text-xs">Acertos</div>
                 </div>
-                <div className="text-center p-3 bg-red-100 rounded-xl border border-red-200">
+                <div className="text-center p-2 sm:p-3 bg-red-100 rounded-xl border border-red-200">
                   <div className="text-3xl font-bold text-red-600 font-greek" data-testid="stats-errors">{quizState.stats.wrongAnswers.length}</div>
                   <div className="text-red-800 font-semibold text-xs">Erros</div>
                 </div>
-                <div className="text-center p-3 bg-blue-100 rounded-xl border border-blue-200">
+                <div className="text-center p-2 sm:p-3 bg-blue-100 rounded-xl border border-blue-200">
                   <div className="text-3xl font-bold text-primary font-greek" data-testid="stats-accuracy">{accuracyPercentage}%</div>
                   <div className="text-primary font-semibold text-xs">Precisão</div>
                 </div>
@@ -931,15 +936,15 @@ export default function Quiz() {
           )}
         </div>
 
-        {/* ── RIGHT: Cronômetro ── */}
-        <aside className="w-44 lg:w-48 flex-shrink-0 flex flex-col gap-2 sticky top-2">
+        {/* ── RIGHT: Cronômetro (barra sticky no mobile, card lateral no desktop) ── */}
+        <aside className="order-2 lg:order-3 w-full lg:w-48 lg:flex-shrink-0 flex flex-col gap-2 sticky top-0 lg:top-2 z-20">
 
-          <div className="academia-container p-3 flex flex-col items-center gap-3">
-            <p className="font-greek font-bold text-xs text-muted-foreground uppercase tracking-wide">⏱️ Cronômetro</p>
+          <div className="academia-container p-2 lg:p-3 flex flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 lg:flex-col lg:gap-3">
+            <p className="hidden lg:block font-greek font-bold text-xs text-muted-foreground uppercase tracking-wide">⏱️ Cronômetro</p>
 
             {/* Big timer display */}
             <div
-              className={`text-5xl font-bold font-greek leading-none ${
+              className={`text-3xl lg:text-5xl font-bold font-greek leading-none ${
                 timer.remainingTime <= 60 && timer.remainingTime > 0
                   ? 'text-red-500 animate-pulse'
                   : timer.isActive
@@ -964,7 +969,7 @@ export default function Quiz() {
 
             {/* Time selector */}
             <Select value={timer.selectedTime.toString()} onValueChange={handleTimeSelect} disabled={timer.isActive}>
-              <SelectTrigger className="w-full text-sm border-border bg-background" data-testid="select-timer">
+              <SelectTrigger className="w-24 lg:w-full text-sm border-border bg-background" data-testid="select-timer">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -981,7 +986,7 @@ export default function Quiz() {
             {!timer.isActive ? (
               <Button
                 onClick={startTimer}
-                className="w-full academia-button-primary py-2 text-sm rounded-xl"
+                className="w-auto px-4 lg:w-full academia-button-primary py-2 text-sm rounded-xl"
                 data-testid="button-start-timer"
               >
                 ▶️ {timer.isConfigured ? 'Continuar' : 'Iniciar'}
@@ -989,7 +994,7 @@ export default function Quiz() {
             ) : (
               <Button
                 onClick={pauseTimer}
-                className="w-full bg-amber-500 hover:bg-amber-600 text-white font-greek font-semibold py-2 text-sm rounded-xl"
+                className="w-auto px-4 lg:w-full bg-amber-500 hover:bg-amber-600 text-white font-greek font-semibold py-2 text-sm rounded-xl"
                 data-testid="button-pause-timer"
               >
                 ⏸️ Pausar
@@ -999,16 +1004,26 @@ export default function Quiz() {
             {/* Reset timer */}
             <Button
               onClick={resetTimer}
-              className="w-full bg-muted hover:bg-muted/80 text-muted-foreground font-greek font-semibold py-1.5 text-xs rounded-xl"
+              className="w-auto px-3 lg:w-full bg-muted hover:bg-muted/80 text-muted-foreground font-greek font-semibold py-1.5 text-xs rounded-xl"
               data-testid="button-reset-timer"
             >
               🔄 Resetar Timer
             </Button>
+
+            {/* Progresso inline (apenas mobile/tablet) */}
+            {(timer.isActive || quizState.isCompleted) && (
+              <div className="lg:hidden text-xs font-greek text-muted-foreground whitespace-nowrap">
+                <span className="font-bold text-green-600 text-sm">
+                  {quizState.questions.filter(q => q.userAnswer !== '').length}/{quizState.questions.length}
+                </span>{' '}
+                respondidas
+              </div>
+            )}
           </div>
 
-          {/* Mini stats while active */}
+          {/* Mini stats while active (card separado apenas no desktop) */}
           {(timer.isActive || quizState.isCompleted) && (
-            <div className="academia-container p-3 text-center">
+            <div className="hidden lg:block academia-container p-3 text-center">
               <p className="font-greek font-bold text-xs text-muted-foreground uppercase tracking-wide mb-2">Progresso</p>
               <div className="text-2xl font-bold text-green-600 font-greek">
                 {quizState.questions.filter(q => q.userAnswer !== '').length}
