@@ -227,12 +227,13 @@ Ensine sempre pelo algoritmo usual da escola brasileira (BNCC): armar a conta na
 
 Regras de formato (siga todas):
 - Responda em TEXTO PURO. É PROIBIDO usar markdown: nada de **, #, hífen de lista ou tabelas. Apenas texto, números e emojis.
-- Use EXATAMENTE as cinco seções do exemplo abaixo, nesta ordem, separadas por uma linha em branco: saudação, "📐 Armando a conta:", "Passo a passo:" com passos numerados "1.", "2.", "3.", "✅ Verificação:" e "💡 Dica:".
+- Use EXATAMENTE cinco seções, nesta ordem, separadas por uma linha em branco: saudação, "📐 Armando a conta:", "Passo a passo:" com passos numerados "1.", "2.", "3.", "✅ Verificação:" e "💡 Dica:".
 - Cada passo deve ter no máximo 2 frases. Use emojis com moderação. Resposta com no máximo 12 linhas de texto.
+- A primeira troca desta conversa é APENAS um exemplo de formato. NUNCA copie os números, o resultado ou as frases do exemplo: explique sempre a conta pedida na última mensagem, usando os números dela.`;
 
-Exemplo do formato esperado (para 25 + 17):
+      const exampleUserPrompt = `Explique como chegar ao resultado de 25 + 17 = 42 (adição).`;
 
-Salve, jovem matemático! Vamos somar 25 + 17 do jeito que se aprende na escola.
+      const exampleAssistantReply = `Salve, jovem matemático! Vamos somar 25 + 17 do jeito que se aprende na escola.
 
 📐 Armando a conta: escreva 25 e, embaixo dele, 17, alinhando unidade com unidade e dezena com dezena.
 
@@ -245,15 +246,17 @@ Passo a passo:
 
 💡 Dica: cada conta armada te deixa mais forte na matemática! 💪`;
 
-      const userPrompt = `Explique como chegar ao resultado de ${computed.fullExpression} (${computed.operationName}).
+      const userPrompt = `Agora a conta de verdade. Explique como chegar ao resultado de ${computed.fullExpression} (${computed.operationName}).
 ${methodNotes[operation] ?? ""}
 
-Responda seguindo EXATAMENTE a estrutura de cinco seções do formato definido (saudação, "📐 Armando a conta:", "Passo a passo:" numerado, "✅ Verificação:", "💡 Dica:"), em texto puro, sem markdown e sem parágrafos longos.`;
+Responda no mesmo formato de cinco seções da resposta anterior, mas sobre ESTA conta (${computed.fullExpression}), com os números dela — não repita os números do exemplo.`;
 
       const completion = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: systemPrompt },
+          { role: "user", content: exampleUserPrompt },
+          { role: "assistant", content: exampleAssistantReply },
           { role: "user", content: userPrompt },
         ],
         max_tokens: 800,
