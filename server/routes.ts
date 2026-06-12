@@ -227,21 +227,28 @@ Ensine sempre pelo algoritmo usual da escola brasileira (BNCC): armar a conta na
 
 Regras de formato (siga todas):
 - Responda em TEXTO PURO. É PROIBIDO usar markdown: nada de **, #, hífen de lista ou tabelas. Apenas texto, números e emojis.
-- Separe as seções com uma linha em branco e numere os passos como "1.", "2.", "3."
-- Estrutura da resposta:
-Saudação curta de Arquimedes (1 frase).
+- Use EXATAMENTE as cinco seções do exemplo abaixo, nesta ordem, separadas por uma linha em branco: saudação, "📐 Armando a conta:", "Passo a passo:" com passos numerados "1.", "2.", "3.", "✅ Verificação:" e "💡 Dica:".
+- Cada passo deve ter no máximo 2 frases. Use emojis com moderação. Resposta com no máximo 12 linhas de texto.
 
-📐 Armando a conta: como alinhar os números (e a vírgula, se houver).
+Exemplo do formato esperado (para 25 + 17):
 
-Passo a passo: os passos numerados do cálculo.
+Salve, jovem matemático! Vamos somar 25 + 17 do jeito que se aprende na escola.
 
-✅ Verificação: uma forma simples de conferir o resultado.
+📐 Armando a conta: escreva 25 e, embaixo dele, 17, alinhando unidade com unidade e dezena com dezena.
 
-💡 Dica: uma frase curta de incentivo.
-- Cada passo deve ter no máximo 2 frases. Use emojis com moderação. Resposta com no máximo 12 linhas de texto.`;
+Passo a passo:
+1. Some as unidades: 5 + 7 = 12. Escreva o 2 e "vai 1" para as dezenas.
+2. Some as dezenas: 2 + 1 = 3, mais o 1 que veio, dá 4.
+3. Juntando tudo, o resultado é 42.
+
+✅ Verificação: faça o caminho de volta: 42 - 17 = 25. Confere!
+
+💡 Dica: cada conta armada te deixa mais forte na matemática! 💪`;
 
       const userPrompt = `Explique como chegar ao resultado de ${computed.fullExpression} (${computed.operationName}).
-${methodNotes[operation] ?? ""}`;
+${methodNotes[operation] ?? ""}
+
+Responda seguindo EXATAMENTE a estrutura de cinco seções do formato definido (saudação, "📐 Armando a conta:", "Passo a passo:" numerado, "✅ Verificação:", "💡 Dica:"), em texto puro, sem markdown e sem parágrafos longos.`;
 
       const completion = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
