@@ -211,32 +211,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
         baseURL: "https://api.groq.com/openai/v1",
       });
 
-      const remainderNote = computed.remainder && computed.remainder !== "0"
-        ? `\nO quociente é ${computed.result} e o RESTO é ${computed.remainder}. Explique o que é o resto de uma divisão de forma simples e visual (ex: usando laranjas ou figurinhas para crianças entenderem).`
-        : operation === "division"
-        ? `\nA divisão é exata, sem resto.`
-        : "";
+      const methodNotes: Record<string, string> = {
+        addition: `Método: arme a conta na vertical, alinhando as ordens (unidades embaixo de unidades, dezenas embaixo de dezenas; se houver vírgula, alinhe vírgula embaixo de vírgula). Some das unidades para a esquerda. Quando a soma de uma ordem passar de 9, reagrupe: escreva o algarismo das unidades e "vai 1" para a ordem seguinte.${numbers.length > 2 ? ` São ${numbers.length} parcelas somadas em sequência.` : ""}`,
+        subtraction: `Método: arme a conta na vertical, alinhando as ordens (e a vírgula, se houver). Subtraia das unidades para a esquerda. Quando o algarismo de cima for menor que o de baixo, "peça emprestado" (desagrupe) 1 da ordem seguinte, que vale 10 na ordem atual.${numbers.length > 2 ? ` São ${numbers.length} números subtraídos em sequência.` : ""}`,
+        multiplication: `Método: arme a conta na vertical. Multiplique cada ordem do número de baixo por todo o número de cima, das unidades para a esquerda, reagrupando ("vai 1") quando passar de 9, formando os produtos parciais. Depois some os produtos parciais, cada um deslocado uma ordem para a esquerda.`,
+        division: `Método: algoritmo da chave (estimar quanto cabe, multiplicar, subtrair e baixar o próximo algarismo). IMPORTANTE: a tela já mostra as subtrações dígito a dígito desta divisão — NÃO repita essas subtrações. Foque no significado: o que o quociente representa e o que sobra.${
+          computed.remainder && computed.remainder !== "0"
+            ? ` O quociente é ${computed.result} e o RESTO é ${computed.remainder}. Explique o que é o resto com um exemplo concreto (laranjas ou figurinhas).`
+            : ` A divisão é exata, sem resto.`
+        }`,
+      };
 
-      const multiNote = numbers.length > 2
-        ? ` São ${numbers.length} números sendo ${computed.operationName === "adição" ? "somados" : "subtraídos"} em sequência.`
-        : "";
+      const systemPrompt = `Você é Arquimedes, um sábio matemático grego que ensina crianças de 6 a 12 anos de forma simples, clara e encorajadora, em português brasileiro.
+Ensine sempre pelo algoritmo usual da escola brasileira (BNCC): armar a conta na vertical e operar ordem por ordem (unidades, dezenas, centenas), nomeando o reagrupamento ("vai 1", "pedir emprestado").
 
-      const prompt = `Você é Arquimedes, um sábio matemático grego que ensina crianças de forma simples, clara e encorajadora.
-Como Arquimedes, explique como chegar ao resultado de ${computed.fullExpression}.
-${multiNote}${remainderNote}
+Regras de formato (siga todas):
+- Responda em TEXTO PURO. É PROIBIDO usar markdown: nada de **, #, hífen de lista ou tabelas. Apenas texto, números e emojis.
+- Separe as seções com uma linha em branco e numere os passos como "1.", "2.", "3."
+- Estrutura da resposta:
+Saudação curta de Arquimedes (1 frase).
 
-Regras:
-- Responda em português brasileiro, de forma bem didática e simpática
-- Use linguagem simples, adequada para crianças de 6 a 12 anos
-- Seja breve: no máximo 4 parágrafos curtos
-- Use emojis com moderação para deixar divertido
-- Termine com uma frase de incentivo`;
+📐 Armando a conta: como alinhar os números (e a vírgula, se houver).
+
+Passo a passo: os passos numerados do cálculo.
+
+✅ Verificação: uma forma simples de conferir o resultado.
+
+💡 Dica: uma frase curta de incentivo.
+- Cada passo deve ter no máximo 2 frases. Use emojis com moderação. Resposta com no máximo 12 linhas de texto.`;
+
+      const userPrompt = `Explique como chegar ao resultado de ${computed.fullExpression} (${computed.operationName}).
+${methodNotes[operation] ?? ""}`;
 
       const completion = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 512,
-        temperature: 0.7,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        max_tokens: 800,
+        temperature: 0.4,
       });
 
       const explanation = completion.choices[0]?.message?.content || "";
